@@ -1,3 +1,3 @@
 package edu.csh.chase.jsonlang.engine.exceptions
 
-class ParseException(message: String) : Exception(message)
+class ParseException(message: String) : RuntimeException(message)
