@@ -1,6 +1,8 @@
 package edu.csh.chase.jsonlang.engine
 
+import edu.csh.chase.jsonlang.engine.Core.AddFunction
 import edu.csh.chase.jsonlang.engine.Core.PrintFunction
+import edu.csh.chase.jsonlang.engine.Core.SetFunction
 import edu.csh.chase.jsonlang.engine.exceptions.JLRuntimeException
 import edu.csh.chase.jsonlang.engine.models.*
 import edu.csh.chase.jsonlang.engine.models.Function
@@ -9,13 +11,17 @@ import java.util.*
 abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean) {
 
     val stack = LinkedList<Frame>()
+    var `return`: Any? = null
+    var returnType: Type? = null
 
-    val mem = HashMap<String, Any>()
+    val mem = HashMap<String, Value>()
     val functions = HashMap<String, NativeFunction>()
 
     init {
         //init core functions
         functions["print"] = PrintFunction()
+        functions["+"] = AddFunction()
+        functions["set"] = SetFunction(mem)
     }
 
     abstract fun execute()
@@ -82,7 +88,8 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
             builtParams.add(v.value)
         }
 
-        val ret = func.execute(*builtParams.toArray())
+        `return` = func.execute(*builtParams.toArray())
+        returnType = func.returns
 
         stack.pop()
     }
@@ -104,6 +111,27 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
             builtParams.add(Parameter(it.name, v))
         }
         return builtParams
+    }
+
+    fun getValue(parent: String, v: Value): Value {
+        val value = v.value
+        if (value !is String) {
+            return v
+        }
+
+        if (value == "return") {
+            if (returnType == null) {
+                throw JLRuntimeException("Error getting return at $parent. No return present")
+            }
+            return Value(`return`, returnType!!)
+        }
+
+        if ("$parent.$value" in mem) {
+            return Value(mem["$parent.$value"], Type.MAny)
+        }
+
+        return v
+
     }
 
 }

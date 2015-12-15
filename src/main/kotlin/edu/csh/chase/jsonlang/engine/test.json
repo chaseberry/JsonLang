@@ -1,0 +1,45 @@
+{
+  "name": "main",
+  "functions": [
+    {
+      "name": "main",
+      "actions": [
+        {
+          "name": "+",
+          "parameters": [
+            {
+              "name": "i",
+              "value": 1
+            },
+            {
+              "name": "j",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "name": "set",
+          "parameters": [
+            {
+              "name": "name",
+              "value": "x"
+            },
+            {
+              "name": "value",
+              "value": "return"
+            }
+          ]
+        },
+        {
+          "name": "print",
+          "parameters": [
+            {
+              "name": "message",
+              "value": "x"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
