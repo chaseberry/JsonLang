@@ -66,7 +66,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
                 }
             }
         }
-        throw JLRuntimeException("Function $name not found. Did you forget a Program name?")
+        throw error("Function $name not found. Did you forget a Program name?")
 
     }
 
@@ -74,15 +74,15 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         stack.push(Frame("$parent.${func.name}"))
         val builtParams = ArrayList<Value>()
         if (params.size != func.params.size) {
-            throw JLRuntimeException("Error executing core function ${func.name}. " +
+            throw error("Error executing core function ${func.name}. " +
                     "Expected ${func.params.size} parameters. Got ${params.size}.")
         }
         func.params.forEach {
-            val v = params[it.name] ?: throw JLRuntimeException("Error executing core function ${func.name}. " +
+            val v = params[it.name] ?: throw error("Error executing core function ${func.name}. " +
                     "Missing parameter ${it.name}")
 
             if (!v.isAcceptedType(it.type)) {
-                throw JLRuntimeException("Error executing core function ${func.name}. " +
+                throw error("Error executing core function ${func.name}. " +
                         "Parameter passed to ${it.name} was incorrect. Expected ${it.type}, got ${v.type} ")
             }
             builtParams.add(v)
@@ -97,15 +97,15 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
     fun parseParams(parent: String, function: Function, action: Action): ArrayList<Parameter> {
         val builtParams = ArrayList<Parameter>()
         if (function.parameters.size != action.parameters.size) {
-            throw JLRuntimeException("Error executing function $parent.${function.name}. " +
+            throw error("Error executing function $parent.${function.name}. " +
                     "Expected ${function.parameters.size} parameters, but got ${action.parameters.size}")
         }
 
         function.parameters.forEach {
-            val v = action.parameters[it.name] ?: throw JLRuntimeException("Error executing function $parent.${function.name}. " +
+            val v = action.parameters[it.name] ?: throw error("Error executing function $parent.${function.name}. " +
                     "Missing parameter ${it.name}")
             if (!v.isAcceptedType(it.type)) {
-                throw JLRuntimeException("Error executing function $parent.${function.name}. " +
+                throw error("Error executing function $parent.${function.name}. " +
                         "Parameter passed to ${it.name} was incorrect. Expected ${it.type}, got ${v.type} ")
             }
             builtParams.add(Parameter(it.name, v))
@@ -121,7 +121,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
         if (value == "return") {
             if (returnType == null) {
-                throw JLRuntimeException("Error getting return at $parent. No return present")
+                throw error("Error getting return at $parent. No return present")
             }
             return Value(`return`, returnType!!)
         }
@@ -132,6 +132,10 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
         return v
 
+    }
+
+    fun error(message: String): JLRuntimeException {
+        return JLRuntimeException(mem, stack, message)
     }
 
 }
