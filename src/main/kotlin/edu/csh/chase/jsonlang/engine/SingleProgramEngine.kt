@@ -10,9 +10,8 @@ class SingleProgramEngine(val program: Program, initWithStdLid: Boolean = true) 
         if (!program.containsFunction("main")) {
             throw JLRuntimeException("${program.name} does not contain a function named 'main'")
         }
-
         val function = program.getFunction("main")
-        executeFunction(function)
+        executeFunction(program, function)
     }
 
 
