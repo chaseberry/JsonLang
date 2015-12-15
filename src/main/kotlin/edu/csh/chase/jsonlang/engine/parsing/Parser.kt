@@ -5,6 +5,7 @@ import edu.csh.chase.jsonlang.engine.models.*
 import edu.csh.chase.jsonlang.engine.models.Function
 import edu.csh.chase.kjson.JsonArray
 import edu.csh.chase.kjson.JsonObject
+import java.util.*
 
 object Parser {
 
@@ -22,18 +23,18 @@ object Parser {
             }
             parseFunction(it, "$module.$name")
         }.toArrayList()
-        return Program(module, name, functions)
+        return Program(name, functions)
     }
 
     fun parseFunction(obj: JsonObject, parent: String): Function {
         val name = obj.getString("name") ?: throw ParseException("No 'name' given to a function in $parent")
-        val arr = obj.getJsonArray("parameters") ?: throw ParseException("No 'parameters' array in function $parent.$name")
-        val params = arr.map {
+        val arr = obj.getJsonArray("parameters")
+        val params = arr?.map {
             if (it !is JsonObject) {
                 throw ParseException("A 'parameters' object must be an object in function $parent.$name")
             }
             parseParameterDefinition(it, "$parent.$name")
-        }.toArrayList()
+        }?.toArrayList()
         val actionsArr = obj.getJsonArray("actions") ?: throw ParseException("No 'actions' array in function $parent.$name")
         val actions = actionsArr.map {
             if (it !is JsonObject) {
@@ -42,7 +43,7 @@ object Parser {
             parseAction(it, "$parent.$name")
         }.toArrayList()
         val returns = obj.getString("returns")
-        return Function(name, params, actions, if (returns != null) parseType(returns) else null)
+        return Function(name, params ?: ArrayList(), actions, if (returns != null) parseType(returns) else null)
     }
 
     fun parseParameterDefinition(obj: JsonObject, parent: String): ParameterDefinition {
@@ -59,7 +60,7 @@ object Parser {
                 throw ParseException("A 'parameter' must be an object in action $parent.$name")
             }
             parseParameter(it, "$parent.$name")
-        }.toArrayList()
+        }.toArrayList().toMap({ it.name }, { it.value })
         return Action(name, params)
     }
 
