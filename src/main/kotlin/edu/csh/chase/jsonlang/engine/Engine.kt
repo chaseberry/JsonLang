@@ -127,7 +127,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         }
 
         if ("$parent.$value" in mem) {
-            return Value(mem["$parent.$value"], Type.MAny)
+            return mem["$parent.$value"]!!
         }
 
         return v
