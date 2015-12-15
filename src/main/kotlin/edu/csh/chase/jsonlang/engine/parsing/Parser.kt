@@ -14,14 +14,13 @@ object Parser {
     }
 
     fun parseProgram(obj: JsonObject): Program {
-        val module = obj.getString("module") ?: throw ParseException("Failed to parse Program")
-        val name = obj.getString("name") ?: throw ParseException("No 'name' given to Program Module: $module")
-        val arr = obj.getJsonArray("functions") ?: throw ParseException("No 'functions' array in program $module.$name")
+        val name = obj.getString("name") ?: throw ParseException("No 'name' given to Program")
+        val arr = obj.getJsonArray("functions") ?: throw ParseException("No 'functions' array in program $$name")
         val functions = arr.map {
             if (it !is JsonObject) {
-                throw ParseException("A 'functions' object must be an object in program $module.$name")
+                throw ParseException("A 'functions' object must be an object in program $$name")
             }
-            parseFunction(it, "$module.$name")
+            parseFunction(it, "$name")
         }.toArrayList()
         return Program(name, functions)
     }
