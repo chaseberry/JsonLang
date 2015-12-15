@@ -45,7 +45,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         val pair = findFunction(action.name)
         val func = pair.first
         if (func is NativeFunction) {
-            executeCoreFunction("$parent.${action.name}", func, action.parameters)
+            executeNativeFunction("$parent.${action.name}", func, action.parameters)
         } else {
             executeFunction("$parent.${action.name}.${pair.second}", func as Function, parseParams(parent, func, action))
         }
@@ -70,9 +70,9 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
     }
 
-    fun executeCoreFunction(parent: String, func: NativeFunction, params: Map<String, Value>) {
-        stack.push(Frame("$params.${func.name}"))
-        val builtParams = ArrayList<Any?>()
+    fun executeNativeFunction(parent: String, func: NativeFunction, params: Map<String, Value>) {
+        stack.push(Frame("$parent.${func.name}"))
+        val builtParams = ArrayList<Value>()
         if (params.size != func.params.size) {
             throw JLRuntimeException("Error executing core function ${func.name}. " +
                     "Expected ${func.params.size} parameters. Got ${params.size}.")
@@ -85,10 +85,10 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
                 throw JLRuntimeException("Error executing core function ${func.name}. " +
                         "Parameter passed to ${it.name} was incorrect. Expected ${it.type}, got ${v.type} ")
             }
-            builtParams.add(v.value)
+            builtParams.add(v)
         }
 
-        `return` = func.execute(*builtParams.toArray())
+        `return` = func.execute(*builtParams.toTypedArray())
         returnType = func.returns
 
         stack.pop()
