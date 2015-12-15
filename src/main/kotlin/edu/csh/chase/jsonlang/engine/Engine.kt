@@ -9,6 +9,8 @@ import java.util.*
 
 abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean) {
 
+    val stack = LinkedList<Frame>()
+
     val mem = HashMap<String, Any>()
     val functions = HashMap<String, NativeFunction>()
 
@@ -25,6 +27,8 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
             val func = findFunction(it.name)
             if (func is NativeFunction) {
                 executeCoreFunction(func, it.parameters)
+            } else {
+                
             }
         }
     }
