@@ -28,7 +28,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
             if (func is NativeFunction) {
                 executeCoreFunction(func, it.parameters)
             } else {
-                
+
             }
         }
     }
@@ -57,7 +57,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
             throw JLRuntimeException("Expected ${func.params.size} parameters. Got ${params.size}")
         }
         func.params.forEach {
-            val v = params[it.name] ?: throw JLRuntimeException("Missing parameter ${it.name}}")
+            val v = params[it.name] ?: throw JLRuntimeException("Missing parameter ${it.name}")
             if (!v.isAcceptedType(it.type)) {
                 throw JLRuntimeException("Parameter passed to ${it.name} was incorrect. Expected ${it.type}, got ${v.type} ")
             }
