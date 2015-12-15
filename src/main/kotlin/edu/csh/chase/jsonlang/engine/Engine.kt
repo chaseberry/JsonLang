@@ -20,42 +20,43 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
     abstract fun execute()
 
-    fun executeFunction(prog: Program, function: Function, params: ArrayList<Parameter>? = null) {
-        stack.push(Frame(prog.name, function.name, null))
+    fun executeFunction(parent: String, function: Function, params: ArrayList<Parameter>? = null) {
+        stack.push(Frame("$parent.${function.name}"))
         params?.forEach {
-            mem["${prog.name}.${function.name}.${it.name}"] = it.value
+            mem["$parent.${function.name}.${it.name}"] = it.value
         }
         function.actions.forEach {
-            executeAction(prog, function, it)
+            executeAction("$parent.${function.name}", it)
         }
         params?.forEach {
-            mem.remove("${prog.name}.${function.name}.${it.name}")
+            mem.remove("$parent.${function.name}.${it.name}")
         }
         stack.pop()
     }
 
-    fun executeAction(prog: Program, function: Function, action: Action) {
-        stack.push(Frame(prog.name, function.name, action.name))
-        val func = findFunction(action.name)
+    fun executeAction(parent: String, action: Action) {
+        stack.push(Frame("$parent.${action.name}"))
+        val pair = findFunction(action.name)
+        val func = pair.first
         if (func is NativeFunction) {
-            executeCoreFunction(prog, func, action.parameters)
+            executeCoreFunction("$parent.${action.name}", func, action.parameters)
         } else {
-
+            executeFunction("$parent.${action.name}.${pair.second}", func as Function, parseParams(parent, func, action))
         }
         stack.pop()
     }
 
-    fun findFunction(name: String): Any {
+    fun findFunction(name: String): Pair<Any, String?> {
         val parts = name.split(".")
         if (parts.size == 1) {
             //Core function, no Program
             if (name in functions) {
-                return functions[name]!!
+                return functions[name]!! to null
             }
         } else {
             programs.forEach {
                 if (it.name == parts[0]) {
-                    return it.getFunction(parts[1])
+                    return it.getFunction(parts[1]) to it.name
                 }
             }
         }
@@ -63,8 +64,8 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
     }
 
-    fun executeCoreFunction(prog: Program, func: NativeFunction, params: Map<String, Value>) {
-        stack.push(Frame(prog.name, func.name))
+    fun executeCoreFunction(parent: String, func: NativeFunction, params: Map<String, Value>) {
+        stack.push(Frame("$params.${func.name}"))
         val builtParams = ArrayList<Any?>()
         if (params.size != func.params.size) {
             throw JLRuntimeException("Error executing core function ${func.name}. " +
@@ -73,15 +74,36 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         func.params.forEach {
             val v = params[it.name] ?: throw JLRuntimeException("Error executing core function ${func.name}. " +
                     "Missing parameter ${it.name}")
-            
+
             if (!v.isAcceptedType(it.type)) {
                 throw JLRuntimeException("Error executing core function ${func.name}. " +
                         "Parameter passed to ${it.name} was incorrect. Expected ${it.type}, got ${v.type} ")
             }
             builtParams.add(v.value)
         }
-        func.execute(*builtParams.toArray())
+
+        val ret = func.execute(*builtParams.toArray())
+
         stack.pop()
+    }
+
+    fun parseParams(parent: String, function: Function, action: Action): ArrayList<Parameter> {
+        val builtParams = ArrayList<Parameter>()
+        if (function.parameters.size != action.parameters.size) {
+            throw JLRuntimeException("Error executing function $parent.${function.name}. " +
+                    "Expected ${function.parameters.size} parameters, but got ${action.parameters.size}")
+        }
+
+        function.parameters.forEach {
+            val v = action.parameters[it.name] ?: throw JLRuntimeException("Error executing function $parent.${function.name}. " +
+                    "Missing parameter ${it.name}")
+            if (!v.isAcceptedType(it.type)) {
+                throw JLRuntimeException("Error executing function $parent.${function.name}. " +
+                        "Parameter passed to ${it.name} was incorrect. Expected ${it.type}, got ${v.type} ")
+            }
+            builtParams.add(Parameter(it.name, v))
+        }
+        return builtParams
     }
 
 }

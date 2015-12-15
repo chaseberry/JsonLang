@@ -8,8 +8,9 @@ class PrintFunction : NativeFunction("print", null) {
 
     override val params: List<ParameterDefinition> = listOf(ParameterDefinition("message", Type.MAny))
 
-    override fun execute(vararg params: Any?) {
+    override fun execute(vararg params: Any?): Any? {
         print(params[0])
+        return null
     }
 
 
