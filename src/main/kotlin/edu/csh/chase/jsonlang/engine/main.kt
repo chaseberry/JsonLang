@@ -25,7 +25,6 @@ fun main(args: Array<String>) {
                     ]
     ))
 
-    println(program)
-
+    SingleProgramEngine(program).execute()
 
 }

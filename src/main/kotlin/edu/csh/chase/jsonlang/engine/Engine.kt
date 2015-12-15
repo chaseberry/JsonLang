@@ -31,7 +31,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
     fun findFunction(name: String): Any {
         val parts = name.split(".")
-        if (parts.size == 0) {
+        if (parts.size == 1) {
             //Core function, no Program
             if (name in functions) {
                 return functions[name]!!
@@ -59,7 +59,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
             }
             builtParams.add(v.value)
         }
-        func.execute(builtParams)
+        func.execute(*builtParams.toArray())
     }
 
 }

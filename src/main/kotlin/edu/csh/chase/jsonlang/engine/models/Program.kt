@@ -3,7 +3,7 @@ package edu.csh.chase.jsonlang.engine.models
 import edu.csh.chase.jsonlang.engine.exceptions.JLRuntimeException
 import java.util.*
 
-class Program(val name: String,
+data class Program(val name: String,
               val functions: ArrayList<Function>) {
 
     fun containsFunction(name: String): Boolean {
