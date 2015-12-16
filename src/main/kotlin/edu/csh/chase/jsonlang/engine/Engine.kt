@@ -1,12 +1,10 @@
 package edu.csh.chase.jsonlang.engine
 
-import edu.csh.chase.jsonlang.engine.Core.AddFunction
-import edu.csh.chase.jsonlang.engine.Core.PrintFunction
-import edu.csh.chase.jsonlang.engine.Core.SetFunction
 import edu.csh.chase.jsonlang.engine.exceptions.JLRuntimeException
 import edu.csh.chase.jsonlang.engine.exceptions.ParseException
 import edu.csh.chase.jsonlang.engine.models.*
 import edu.csh.chase.jsonlang.engine.models.Function
+import edu.csh.chase.jsonlang.engine.parsing.CoreLoader
 import edu.csh.chase.jsonlang.engine.parsing.Parser
 import edu.csh.chase.kjson.JsonObject
 import java.util.*
@@ -16,13 +14,14 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
     val stack = LinkedList<Frame>()
 
     val mem = HashMap<String, Value>()
-    val functions = HashMap<String, NativeFunction>()
+    val coreFunctions = HashMap<String, NativeFunction>()
 
     init {
         //init core functions
-        functions["print"] = PrintFunction(this)
-        functions["+"] = AddFunction(this)
-        functions["set"] = SetFunction(this)
+        CoreLoader.loadCoreFunctions().forEach {
+            val func = it.getDeclaredConstructor(Engine::class.java).newInstance(this)
+            coreFunctions[func.name] = func
+        }
     }
 
     abstract fun execute()
@@ -71,8 +70,8 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         val parts = name.split(".")
         if (parts.size == 1) {
             //Core function, no Program
-            if (name in functions) {
-                return functions[name]!! to null
+            if (name in coreFunctions) {
+                return coreFunctions[name]!! to null
             }
         } else {
             programs.forEach {

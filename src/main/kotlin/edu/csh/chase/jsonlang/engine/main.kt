@@ -8,6 +8,7 @@ import java.io.File
 import java.io.FileReader
 
 fun main(args: Array<String>) {
+
     val reader = BufferedReader(FileReader(File("/Users/chase/Code/JsonLang/src/main/kotlin/edu/csh/chase/jsonlang/engine/test.json")))
     val json = JsonObject(reader.readText())
     reader.close()
