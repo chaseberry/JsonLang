@@ -135,12 +135,29 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         val value = v.value
 
         //TODO allow str interop, by spliting on 'space' and check each token for *name
-        if (value is String && value[0] == '*') {
-            val varName = value.substring(1)
-            if ("$parent.$varName" !in mem) {
-                throw error("$varName does not exist in this memory space.")
+        if (value is String) {
+
+            val valParts = value.split(" ")
+            if (valParts.size == 1) {
+                val varName = valParts[0].substring(1)
+                if ("$parent.$varName" !in mem) {
+                    throw error("$varName does not exist in this memory space.")
+                }
+                return mem["$parent.$varName"]!!
+            } else {
+                var newValue = ""
+                valParts.forEach {
+                    val varName = it.substring(1)
+                    if (it[0] == '*') {
+                        if ("$parent.$it" !in mem) {
+                            newValue += " ${mem["$parent.$varName"]!!.value}"
+                        } else {
+                            newValue += " $it"
+                        }
+                    }
+                }
+                return Value(newValue.substring(1), Type.String)
             }
-            return mem["$parent.$varName"]!!
         }
 
         if (value is JsonObject) {
