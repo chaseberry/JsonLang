@@ -20,9 +20,9 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
     init {
         //init core functions
-        functions["print"] = PrintFunction()
-        functions["+"] = AddFunction()
-        functions["set"] = SetFunction(mem)
+        functions["print"] = PrintFunction(this)
+        functions["+"] = AddFunction(this)
+        functions["set"] = SetFunction(this)
     }
 
     abstract fun execute()
@@ -56,7 +56,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         return if (function.returns == null) null else currentVal
     }
 
-    fun executeAction(parent: String, action: Action): Value? {
+    private fun executeAction(parent: String, action: Action): Value? {
         val pair = findFunction(action.name)
         val func = pair.first
         val r = if (func is NativeFunction) {
@@ -67,7 +67,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         return r
     }
 
-    fun findFunction(name: String): Pair<Any, String?> {
+    private fun findFunction(name: String): Pair<Any, String?> {
         val parts = name.split(".")
         if (parts.size == 1) {
             //Core function, no Program
@@ -86,7 +86,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
     }
 
-    fun executeNativeFunction(parent: String, func: NativeFunction, params: Map<String, Value>): Value? {
+    private fun executeNativeFunction(parent: String, func: NativeFunction, params: Map<String, Value>): Value? {
         stack.push(Frame("$parent.${func.name}"))
         val builtParams = ArrayList<Value>()
         if (params.size != func.params.size) {
@@ -113,7 +113,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         return if (func.returns == null) null else Value(r, func.returns)
     }
 
-    fun parseParams(parent: String, function: Function, action: Action): ArrayList<Parameter> {
+    private fun parseParams(parent: String, function: Function, action: Action): ArrayList<Parameter> {
         val builtParams = ArrayList<Parameter>()
         if (function.parameters.size != action.parameters.size) {
             throw error("Error executing function $parent.${function.name}. " +
@@ -132,7 +132,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         return builtParams
     }
 
-    fun getValue(parent: String, v: Value): Value {
+    private fun getValue(parent: String, v: Value): Value {
         val value = v.value
 
         //TODO allow str interop, by spliting on 'space' and check each token for *name

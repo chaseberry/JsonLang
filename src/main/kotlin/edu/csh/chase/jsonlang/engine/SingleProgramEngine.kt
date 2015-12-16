@@ -1,6 +1,5 @@
 package edu.csh.chase.jsonlang.engine
 
-import edu.csh.chase.jsonlang.engine.exceptions.JLRuntimeException
 import edu.csh.chase.jsonlang.engine.models.Program
 
 class SingleProgramEngine(val program: Program, initWithStdLid: Boolean = true) :

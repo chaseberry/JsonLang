@@ -4,7 +4,7 @@ import edu.csh.chase.jsonlang.engine.models.ParameterDefinition
 import edu.csh.chase.jsonlang.engine.models.Type
 import edu.csh.chase.jsonlang.engine.models.Value
 
-abstract class NativeFunction(val name: String, val returns: Type?) {
+abstract class NativeFunction(val engine: Engine, val name: String, val returns: Type?) {
 
     abstract val params: List<ParameterDefinition>
     
