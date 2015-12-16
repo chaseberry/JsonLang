@@ -30,7 +30,11 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
     fun executeFunction(parent: String, function: Function, params: ArrayList<Parameter>? = null): Value? {
         stack.push(Frame("$parent.${function.name}"))
         params?.forEach {
-            mem["$parent.${function.name}.${it.name}"] = getValue(parent, it.value)
+            val v = getValue(parent, it.value)
+            if (v.type != it.value.type) {
+                throw error("$parent.${function.name} parameter expected type ${it.value.type}. Got ${v.type}")
+            }
+            mem["$parent.${function.name}.${it.name}"] = v
         }
         var currentVal: Value? = null
         function.actions.forEach {
@@ -91,14 +95,21 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
                     "Expected ${func.params.size} parameters. Got ${params.size}.")
         }
         func.params.forEach {
-            val v = params[it.name] ?: throw error("Error executing core function ${func.name}. " +
+            var v = params[it.name] ?: throw error("Error executing core function ${func.name}. " +
                     "Missing parameter ${it.name}")
+
+            v = getValue(parent, v)
 
             if (!v.isAcceptedType(it.type)) {
                 throw error("Error executing core function ${func.name}. " +
                         "Parameter passed to ${it.name} was incorrect. Expected ${it.type}, got ${v.type} ")
             }
-            builtParams.add(getValue(parent, v))
+
+            if(v.type != it.type){
+                throw error("$parent.${func.name} parameter expected type ${it.type}. Got ${v.type}")
+            }
+
+            builtParams.add(v)
         }
 
         val r = func.execute(*builtParams.toTypedArray())
