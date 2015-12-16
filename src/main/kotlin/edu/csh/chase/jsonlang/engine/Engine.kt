@@ -89,17 +89,17 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         stack.push(Frame("$parent.${func.name}"))
         val builtParams = ArrayList<Value>()
         if (params.size != func.params.size) {
-            throw error("Error executing core function ${func.name}. " +
+            throw error("Error executing native function ${func.name}. " +
                     "Expected ${func.params.size} parameters. Got ${params.size}.")
         }
         func.params.forEach {
-            var v = params[it.name] ?: throw error("Error executing core function ${func.name}. " +
+            var v = params[it.name] ?: throw error("Error executing native function ${func.name}. " +
                     "Missing parameter ${it.name}")
 
             v = getValue(parent, v)
 
             if (!v.isAcceptedType(it.type)) {
-                throw error("Error executing core function ${func.name}. " +
+                throw error("Error executing native function ${func.name}. " +
                         "Parameter passed to ${it.name} was incorrect. Expected ${it.type}, got ${v.type} ")
             }
 
