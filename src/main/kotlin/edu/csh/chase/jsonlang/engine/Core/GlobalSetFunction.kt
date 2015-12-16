@@ -6,7 +6,7 @@ import edu.csh.chase.jsonlang.engine.models.ParameterDefinition
 import edu.csh.chase.jsonlang.engine.models.Type
 import edu.csh.chase.jsonlang.engine.models.Value
 
-class GlobalFunction(e: Engine) : NativeFunction(e, "setGlobal", null) {
+class GlobalSetFunction(e: Engine) : NativeFunction(e, "setGlobal", null) {
 
     override val params: List<ParameterDefinition> = listOf(ParameterDefinition("name", Type.String),
             ParameterDefinition("value", Type.MAny))

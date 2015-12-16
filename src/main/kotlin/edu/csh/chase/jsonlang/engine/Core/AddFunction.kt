@@ -49,7 +49,7 @@ class AddFunction(e: Engine) : NativeFunction(e, "+", Type.Any) {
         return i + j
         }
          */
-        throw engine.error("Error executing native function $name at $parent.$name.i and j were incompatible types. " +
+        throw engine.error("Error executing native function $name at $parent.$name. i and j were incompatible types. " +
                 "i was ${params[0].type}, while j was ${params[1].type}")
     }
 
