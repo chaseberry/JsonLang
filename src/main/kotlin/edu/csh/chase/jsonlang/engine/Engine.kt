@@ -107,7 +107,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
             builtParams.add(v)
         }
 
-        val r = func.execute(*builtParams.toTypedArray())
+        val r = func.execute(parent, *builtParams.toTypedArray())
 
         stack.pop()
         return if (func.returns == null) null else Value(r, func.returns)
@@ -140,7 +140,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
             if ("$parent.$varName" !in mem) {
                 throw error("$varName does not exist in this memory space.")
             }
-            return mem["$parent.$value"]!!
+            return mem["$parent.$varName"]!!
         }
 
         if (value is JsonObject) {

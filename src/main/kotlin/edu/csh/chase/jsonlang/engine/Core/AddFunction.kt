@@ -10,7 +10,7 @@ class AddFunction : NativeFunction("+", Type.Number) {
     override val params: List<ParameterDefinition> = listOf(ParameterDefinition("i", Type.Number),
             ParameterDefinition("j", Type.Number))
 
-    override fun execute(vararg params: Value): Any? {
+    override fun execute(parent:String, vararg params: Value): Any? {
         return (params[0].value as Number).toDouble() + (params[1].value as Number).toDouble()
     }
 

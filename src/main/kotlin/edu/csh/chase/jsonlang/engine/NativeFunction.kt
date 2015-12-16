@@ -8,6 +8,6 @@ abstract class NativeFunction(val name: String, val returns: Type?) {
 
     abstract val params: List<ParameterDefinition>
     
-    abstract fun execute(vararg params: Value): Any?
+    abstract fun execute(parent:String, vararg params: Value): Any?
 
 }
