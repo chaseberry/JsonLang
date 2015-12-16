@@ -136,9 +136,8 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
         //TODO allow str interop, by spliting on 'space' and check each token for *name
         if (value is String) {
-
             val valParts = value.split(" ")
-            if (valParts.size == 1) {
+            if (valParts.size == 1 && valParts[0][0] == '*') {
                 val varName = valParts[0].substring(1)
                 if ("$parent.$varName" !in mem) {
                     throw error("$varName does not exist in this memory space.")
@@ -154,6 +153,8 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
                         } else {
                             newValue += " $it"
                         }
+                    } else {
+                        newValue += " $it"
                     }
                 }
                 return Value(newValue.substring(1), Type.String)
