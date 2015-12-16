@@ -4,15 +4,16 @@ import edu.csh.chase.jsonlang.engine.Core.AddFunction
 import edu.csh.chase.jsonlang.engine.Core.PrintFunction
 import edu.csh.chase.jsonlang.engine.Core.SetFunction
 import edu.csh.chase.jsonlang.engine.exceptions.JLRuntimeException
+import edu.csh.chase.jsonlang.engine.exceptions.ParseException
 import edu.csh.chase.jsonlang.engine.models.*
 import edu.csh.chase.jsonlang.engine.models.Function
+import edu.csh.chase.jsonlang.engine.parsing.Parser
+import edu.csh.chase.kjson.JsonObject
 import java.util.*
 
 abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean) {
 
     val stack = LinkedList<Frame>()
-    var `return`: Any? = null
-    var returnType: Type? = null
 
     val mem = HashMap<String, Value>()
     val functions = HashMap<String, NativeFunction>()
@@ -26,30 +27,42 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
     abstract fun execute()
 
-    fun executeFunction(parent: String, function: Function, params: ArrayList<Parameter>? = null) {
+    fun executeFunction(parent: String, function: Function, params: ArrayList<Parameter>? = null): Value? {
         stack.push(Frame("$parent.${function.name}"))
         params?.forEach {
-            mem["$parent.${function.name}.${it.name}"] = it.value
+            mem["$parent.${function.name}.${it.name}"] = getValue(parent, it.value)
         }
+        var currentVal: Value? = null
         function.actions.forEach {
-            executeAction("$parent.${function.name}", it)
+            currentVal = executeAction("$parent.${function.name}", it)
         }
         params?.forEach {
             mem.remove("$parent.${function.name}.${it.name}")
         }
+
+        if (currentVal == null && function.returns != null) {
+            throw error("$parent.${function.name} returns ${function.returns}. No value was returned from last action.")
+        }
+
+        if (currentVal?.type != function.returns) {
+            throw error("$parent.${function.name} returns ${function.returns}. Got ${currentVal?.type}")
+        }
+
         stack.pop()
+        return if (function.returns == null) null else currentVal
     }
 
-    fun executeAction(parent: String, action: Action) {
+    fun executeAction(parent: String, action: Action): Value? {
         stack.push(Frame("$parent.${action.name}"))
         val pair = findFunction(action.name)
         val func = pair.first
-        if (func is NativeFunction) {
+        val r = if (func is NativeFunction) {
             executeNativeFunction("$parent.${action.name}", func, action.parameters)
         } else {
             executeFunction("$parent.${action.name}.${pair.second}", func as Function, parseParams(parent, func, action))
         }
         stack.pop()
+        return r
     }
 
     fun findFunction(name: String): Pair<Any, String?> {
@@ -70,7 +83,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
     }
 
-    fun executeNativeFunction(parent: String, func: NativeFunction, params: Map<String, Value>) {
+    fun executeNativeFunction(parent: String, func: NativeFunction, params: Map<String, Value>): Value? {
         stack.push(Frame("$parent.${func.name}"))
         val builtParams = ArrayList<Value>()
         if (params.size != func.params.size) {
@@ -85,13 +98,13 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
                 throw error("Error executing core function ${func.name}. " +
                         "Parameter passed to ${it.name} was incorrect. Expected ${it.type}, got ${v.type} ")
             }
-            builtParams.add(v)
+            builtParams.add(getValue(parent, v))
         }
 
-        `return` = func.execute(*builtParams.toTypedArray())
-        returnType = func.returns
+        val r = func.execute(*builtParams.toTypedArray())
 
         stack.pop()
+        return if (func.returns == null) null else Value(r, func.returns)
     }
 
     fun parseParams(parent: String, function: Function, action: Action): ArrayList<Parameter> {
@@ -119,15 +132,21 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
             return v
         }
 
-        if (value == "return") {
-            if (returnType == null) {
-                throw error("Error getting return at $parent. No return present")
+        if (value[0] == '*') {
+            if ("$parent.$value" !in mem) {
+                throw error("$value does not exist in this memory space.")
             }
-            return Value(`return`, returnType!!)
+            return mem["$parent.$value"]!!
         }
 
-        if ("$parent.$value" in mem) {
-            return mem["$parent.$value"]!!
+        if (v.value is JsonObject) {
+            try {
+                val action = Parser.parseAction(v.value, parent)
+                val value = executeAction(parent, action) ?: return v
+                return value
+            } catch(e: ParseException) {
+
+            }
         }
 
         return v

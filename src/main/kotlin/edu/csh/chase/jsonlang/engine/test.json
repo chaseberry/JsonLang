@@ -5,19 +5,6 @@
       "name": "main",
       "actions": [
         {
-          "name": "+",
-          "parameters": [
-            {
-              "name": "i",
-              "value": 1
-            },
-            {
-              "name": "j",
-              "value": 1
-            }
-          ]
-        },
-        {
           "name": "set",
           "parameters": [
             {
@@ -26,7 +13,19 @@
             },
             {
               "name": "value",
-              "value": "return"
+              "value": {
+                "name": "+",
+                "parameters": [
+                  {
+                    "name": "i",
+                    "value": 1
+                  },
+                  {
+                    "name": "j",
+                    "value": 1
+                  }
+                ]
+              }
             }
           ]
         },
@@ -35,7 +34,7 @@
           "parameters": [
             {
               "name": "message",
-              "value": "x"
+              "value": "*x"
             }
           ]
         }
