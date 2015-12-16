@@ -135,6 +135,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
     fun getValue(parent: String, v: Value): Value {
         val value = v.value
 
+        //TODO allow str interop, by spliting on 'space' and check each token for *name
         if (value is String && value[0] == '*') {
             val varName = value.substring(1)
             if ("$parent.$varName" !in mem) {
