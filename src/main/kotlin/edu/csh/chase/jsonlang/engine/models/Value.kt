@@ -12,6 +12,8 @@ data class Value(val value: Any?,
             Type.MString -> type == Type.String || type == Type.MString
             Type.Number -> type == Type.Number
             Type.MNumber -> type == Type.MNumber || type == Type.Number
+            Type.Boolean -> type == Type.Boolean
+            Type.MBoolean -> type == Type.Boolean || type == Type.MBoolean
             else -> throw RuntimeException("I need to finish this")
         }
     }
