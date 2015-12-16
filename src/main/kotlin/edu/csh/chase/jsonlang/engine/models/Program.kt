@@ -1,6 +1,5 @@
 package edu.csh.chase.jsonlang.engine.models
 
-import edu.csh.chase.jsonlang.engine.exceptions.JLRuntimeException
 import java.util.*
 
 data class Program(val name: String,
@@ -11,9 +10,9 @@ data class Program(val name: String,
         return false
     }
 
-    fun getFunction(name: String): Function {
+    fun getFunction(name: String): Function? {
         functions.forEach { if (it.name == name) return it }
-        throw JLRuntimeException("Function $name does not exist in ${this.name}")
+        return null
     }
 
 }

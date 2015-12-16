@@ -8,9 +8,9 @@ class SingleProgramEngine(val program: Program, initWithStdLid: Boolean = true) 
 
     override fun execute() {
         if (!program.containsFunction("main")) {
-            throw JLRuntimeException("${program.name} does not contain a function named 'main'")
+            throw error("${program.name} does not contain a function named 'main'")
         }
-        val function = program.getFunction("main")
+        val function = program.getFunction("main") ?: throw error("Function 'main' does not exist in ${program.name}")
         executeFunction("main", function)
     }
 

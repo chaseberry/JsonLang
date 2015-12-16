@@ -57,15 +57,13 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
     }
 
     fun executeAction(parent: String, action: Action): Value? {
-        stack.push(Frame("$parent.${action.name}"))
         val pair = findFunction(action.name)
         val func = pair.first
         val r = if (func is NativeFunction) {
-            executeNativeFunction("$parent.${action.name}", func, action.parameters)
+            executeNativeFunction("$parent", func, action.parameters)
         } else {
-            executeFunction("$parent.${action.name}.${pair.second}", func as Function, parseParams(parent, func, action))
+            executeFunction("$parent", func as Function, parseParams(parent, func, action))
         }
-        stack.pop()
         return r
     }
 
@@ -79,7 +77,8 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         } else {
             programs.forEach {
                 if (it.name == parts[0]) {
-                    return it.getFunction(parts[1]) to it.name
+                    val func = it.getFunction(parts[1]) ?: throw error("Function $name does not exist in ${it.name}")
+                    return func to it.name
                 }
             }
         }
@@ -103,10 +102,6 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
             if (!v.isAcceptedType(it.type)) {
                 throw error("Error executing core function ${func.name}. " +
                         "Parameter passed to ${it.name} was incorrect. Expected ${it.type}, got ${v.type} ")
-            }
-
-            if(v.type != it.type){
-                throw error("$parent.${func.name} parameter expected type ${it.type}. Got ${v.type}")
             }
 
             builtParams.add(v)
@@ -139,20 +134,18 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
     fun getValue(parent: String, v: Value): Value {
         val value = v.value
-        if (value !is String) {
-            return v
-        }
 
-        if (value[0] == '*') {
-            if ("$parent.$value" !in mem) {
-                throw error("$value does not exist in this memory space.")
+        if (value is String && value[0] == '*') {
+            val varName = value.substring(1)
+            if ("$parent.$varName" !in mem) {
+                throw error("$varName does not exist in this memory space.")
             }
             return mem["$parent.$value"]!!
         }
 
-        if (v.value is JsonObject) {
+        if (value is JsonObject) {
             try {
-                val action = Parser.parseAction(v.value, parent)
+                val action = Parser.parseAction(value, parent)
                 val value = executeAction(parent, action) ?: return v
                 return value
             } catch(e: ParseException) {
