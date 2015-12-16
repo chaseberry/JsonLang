@@ -5,7 +5,6 @@ import edu.csh.chase.jsonlang.engine.NativeFunction
 import edu.csh.chase.jsonlang.engine.models.ParameterDefinition
 import edu.csh.chase.jsonlang.engine.models.Type
 import edu.csh.chase.jsonlang.engine.models.Value
-import java.util.*
 
 class SetFunction(e: Engine) : NativeFunction(e, "set", null) {
 
