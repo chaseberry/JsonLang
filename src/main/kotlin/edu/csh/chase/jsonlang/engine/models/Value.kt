@@ -7,7 +7,8 @@ data class Value(val value: Any?,
     fun isAcceptedType(requiredType: Type): Boolean {
         return when (requiredType) {
             Type.MAny -> true
-            Type.Any -> (type == Type.Any || type == Type.Array || type == Type.String || type == Type.Object || type == Type.Number || type == Type.Boolean)
+            Type.Any -> (type == Type.Any || type == Type.Array || type == Type.String || type == Type.Object ||
+                    type == Type.Number || type == Type.Boolean)
             Type.String -> type == Type.String
             Type.MString -> type == Type.String || type == Type.MString
             Type.Number -> type == Type.Number
