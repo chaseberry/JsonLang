@@ -8,12 +8,12 @@ import edu.csh.chase.jsonlang.engine.models.Value
 
 class AddFunction(e: Engine) : NativeFunction(e, "+", Type.Any) {
 
-    override val params: List<ParameterDefinition> = listOf(ParameterDefinition("i", Type.Any),
+    override val parameters: List<ParameterDefinition> = listOf(ParameterDefinition("i", Type.Any),
             ParameterDefinition("j", Type.Any))
 
-    override fun execute(parent: String, vararg params: Value): Any? {
-        val i = params[0].value
-        val j = params[1].value
+    override fun execute(parent: String, params: Map<String, Value>): Any? {
+        val i = engine.getValue(parent, params["i"]!!).value
+        val j = engine.getValue(parent, params["j"]!!).value
 
         if (i is Int && j is Int) {
             return i + j
@@ -50,7 +50,7 @@ class AddFunction(e: Engine) : NativeFunction(e, "+", Type.Any) {
         }
          */
         throw engine.error("Error executing native function $name at $parent.$name. i and j were incompatible types. " +
-                "i was ${params[0].type}, while j was ${params[1].type}")
+                "i was ${params["i"]!!.type}, while j was ${params["j"]!!.type}")
     }
 
 

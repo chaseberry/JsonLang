@@ -7,11 +7,11 @@ import edu.csh.chase.jsonlang.engine.models.Type
 import edu.csh.chase.jsonlang.engine.models.Value
 
 class GlobalGetFunction(e: Engine) : NativeFunction(e, "getGlobal", Type.MAny) {
-    override val params: List<ParameterDefinition>
+    override val parameters: List<ParameterDefinition>
         get() = listOf(ParameterDefinition("name", Type.String))
 
-    override fun execute(parent: String, vararg params: Value): Any? {
-        val name = params[0].value as String
+    override fun execute(parent: String, params: Map<String, Value>): Any? {
+        val name = engine.getValue(parent, params["name"]!!).value as String
         if (name !in engine.mem) {
             throw engine.error("Error executing native function ${this.name} at $parent.${this.name}. " +
                     "$name is not defined in this memspace")

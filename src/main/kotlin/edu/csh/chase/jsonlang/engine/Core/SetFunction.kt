@@ -8,11 +8,11 @@ import edu.csh.chase.jsonlang.engine.models.Value
 
 class SetFunction(e: Engine) : NativeFunction(e, "set", null) {
 
-    override val params: List<ParameterDefinition> = listOf(ParameterDefinition("name", Type.String),
+    override val parameters: List<ParameterDefinition> = listOf(ParameterDefinition("name", Type.String),
             ParameterDefinition("value", Type.MAny))
 
-    override fun execute(parent: String, vararg params: Value): Any? {
-        engine.mem["$parent.${params[0].value as String}"] = params[1]
+    override fun execute(parent: String, params: Map<String, Value>): Any? {
+        engine.mem["$parent.${engine.getValue(parent, params["name"]!!).value as String}"] = params["value"]!!
         return null
     }
 }

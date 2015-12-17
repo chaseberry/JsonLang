@@ -4,10 +4,10 @@ import edu.csh.chase.jsonlang.engine.models.ParameterDefinition
 import edu.csh.chase.jsonlang.engine.models.Type
 import edu.csh.chase.jsonlang.engine.models.Value
 
-abstract class NativeFunction(val engine: Engine, val name: String, val returns: Type?) {
+abstract class NativeFunction(val engine: Engine, override val name: String, override val returns: Type?) : Callable {
 
-    abstract val params: List<ParameterDefinition>
-    
-    abstract fun execute(parent:String, vararg params: Value): Any?
+    abstract override val parameters: List<ParameterDefinition>
+
+    abstract fun execute(parent: String, params: Map<String, Value>): Any?
 
 }

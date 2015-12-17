@@ -98,4 +98,22 @@ object Parser {
         }
     }
 
+    fun unsafeParseAction(obj: JsonObject): Action? {
+        val name = obj.getString("name") ?: return null
+        val arr = obj.getJsonArray("parameters") ?: return null
+        val params = arr.map {
+            if ( it !is JsonObject) {
+                return null
+            }
+            unsafeParseParameter(it) ?: return null
+        }.toArrayList().toMap({ it.name }, { it.value })
+        return Action(name, params)
+    }
+
+    fun unsafeParseParameter(obj: JsonObject): Parameter? {
+        val name = obj.getString("name") ?: return null
+        val value = parseValue(obj["value"])
+        return Parameter(name, value)
+    }
+
 }

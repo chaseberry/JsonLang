@@ -8,11 +8,11 @@ import edu.csh.chase.jsonlang.engine.models.Value
 
 class GlobalSetFunction(e: Engine) : NativeFunction(e, "setGlobal", null) {
 
-    override val params: List<ParameterDefinition> = listOf(ParameterDefinition("name", Type.String),
+    override val parameters: List<ParameterDefinition> = listOf(ParameterDefinition("name", Type.String),
             ParameterDefinition("value", Type.MAny))
 
-    override fun execute(parent: String, vararg params: Value): Any? {
-        engine.mem[params[0].value as String] = params[1]
+    override fun execute(parent: String, params: Map<String, Value>): Any? {
+        engine.mem[engine.getValue(parent, params["name"]!!).value as String] = engine.getValue(parent, params["value"]!!)
         return null
     }
 
