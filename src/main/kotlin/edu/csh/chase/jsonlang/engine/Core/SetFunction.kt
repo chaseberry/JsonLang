@@ -12,7 +12,8 @@ class SetFunction(e: Engine) : NativeFunction(e, "set", null) {
             ParameterDefinition("value", Type.MAny))
 
     override fun execute(parent: String, params: Map<String, Value>): Any? {
-        engine.mem["$parent.${engine.getValue(parent, params["name"]!!).value as String}"] = params["value"]!!
+        val key = "$parent.${engine.getValue(parent, params["name"]!!).value as String}"
+        engine.mem[key] = engine.getValue(parent, params["value"]!!)
         return null
     }
 }

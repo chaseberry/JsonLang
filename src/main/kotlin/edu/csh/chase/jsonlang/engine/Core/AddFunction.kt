@@ -14,7 +14,7 @@ class AddFunction(e: Engine) : NativeFunction(e, "+", Type.Any) {
     override fun execute(parent: String, params: Map<String, Value>): Any? {
         val i = engine.getValue(parent, params["i"]!!).value
         val j = engine.getValue(parent, params["j"]!!).value
-
+        
         if (i is Int && j is Int) {
             return i + j
         }
