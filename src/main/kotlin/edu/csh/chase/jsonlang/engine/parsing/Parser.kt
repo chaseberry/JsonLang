@@ -74,7 +74,14 @@ object Parser {
             is Number -> Value(value, Type.Number)
             is String -> Value(value, Type.String)
             is Boolean -> Value(value, Type.Boolean)
-            is JsonObject -> Value(value, Type.Object)
+            is JsonObject -> {
+                val action = unsafeParseAction(value)
+                if (action == null) {
+                    Value(value, Type.Object)
+                } else {
+                    Value(action, Type.Action)
+                }
+            }
             is JsonArray -> Value(value, Type.Array)
             null -> Value(value, Type.MAny)
             else -> Value(null, Type.MAny)
