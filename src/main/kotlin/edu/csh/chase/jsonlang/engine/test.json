@@ -5,36 +5,27 @@
       "name": "main",
       "actions": [
         {
-          "name": "set",
-          "parameters": [
-            {
-              "name": "name",
-              "value": "x"
-            },
-            {
-              "name": "value",
-              "value": {
-                "name": "+",
-                "parameters": [
-                  {
-                    "name": "i",
-                    "value": 1
-                  },
-                  {
-                    "name": "j",
-                    "value": 1
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        {
           "name": "print",
           "parameters": [
             {
               "name": "message",
-              "value": "1 + 1 = *x"
+              "value": {
+                "name": "if",
+                "parameters": [
+                  {
+                    "name": "condition",
+                    "value": false
+                  },
+                  {
+                    "name": "then",
+                    "value": 5
+                  },
+                  {
+                    "name": "else",
+                    "value": "fuck"
+                  }
+                ]
+              }
             }
           ]
         }
