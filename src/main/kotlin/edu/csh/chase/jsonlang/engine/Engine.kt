@@ -27,7 +27,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         stack.push(Frame("$parent.${function.name}"))
         params?.forEach {
             //TODO make this load lazily?
-            val v = getValue(parent, it.value)
+            val v = getValue("$parent.${function.name}", it.value, it.key)
             if (v.type != it.value.type) {
                 throw error("$parent.${function.name} parameter expected type ${it.value.type}. Got ${v.type}")
             }
@@ -99,77 +99,57 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
                     "Expected ${function.parameters.size} parameters, but got ${action.parameters.size}")
         }
 
-        val map = ParamMap(parent, this)
+        val map = ParamMap("$parent.${function.name}", this)
 
         function.parameters.forEach {
             val v = action.parameters[it.name] ?: throw error("Error executing function $parent.${function.name}. " +
                     "Missing parameter ${it.name}")
-
-            var checkedType = v.type
-
-            if (v.value is Action) {
-                val ret = getReturnType(v.value) ?: throw error("Error executing function $parent.${function.name}. " +
-                        "Parameter ${it.name} expected ${it.type}. Got null from action ${v.value.name}")
-                checkedType = ret
-            }
-
-            if (!checkedType.isParentType(it.type)) {
-                throw error("Error executing function $parent.${function.name}. " +
-                        "Parameter passed to ${it.name} was incorrect. Expected ${it.type}, got ${v.type} ")
-            }
-
             map.put(it.name, v)
         }
 
         return map
     }
 
-    fun getReturnType(action: Action): Type? {
-        try {
-            val func = findFunction(action.name)
-            return func.returns
-        } catch(e: JLRuntimeException) {
-
-        }
-        return null
+    fun getValue(parent: String, v: Value, name: String): Value {
+        return getValue(parent, v, name, null)
     }
 
-    fun getValue(parent: String, v: Value): Value {
+    fun getValue(parent: String, v: Value, name: String, expectedType: Type?): Value {
         val value = v.value
 
-        //TODO allow str interop, by spliting on 'space' and check each token for *name
-        if (value is String) {
-            val valParts = value.split(" ")
-            if (valParts.size == 1 && valParts[0][0] == '*') {
-                val varName = valParts[0].substring(1)
-                if ("$parent.$varName" !in mem) {
-                    throw error("$varName does not exist in this memory space.")
-                }
-                return mem["$parent.$varName"]!!
-            } else {
-                var newValue = ""
-                valParts.forEach {
-                    val varName = it.substring(1)
-                    if (it[0] == '*') {
-                        if ("$parent.$varName" in mem) {
-                            newValue += " ${mem["$parent.$varName"]!!.value}"
-                        } else {
-                            newValue += " $it"
-                        }
-                    } else {
-                        newValue += " $it"
-                    }
-                }
-                return Value(newValue.substring(1), Type.String)
+        val returnedVal = if (value is String && value[0] == '*') {
+            val varName = value.substring(1)
+            val p = getBack(parent)
+            mem["$p.$varName"] ?: throw error("$p.$varName does not exist in memory")
+        } else if (value is Action) {
+            executeAction(parent, value) ?: throw error("Error executing function $parent " +
+                    "Parameter $name expected $expectedType. Got null from action ${value.name}")
+        } else {
+            v
+        }
+
+        if (expectedType != null && !returnedVal.type.isParentType(expectedType)) {
+            throw error("Error executing function $parent. " +
+                    "Parameter $name expected $expectedType. Got ${returnedVal.type}")
+        }
+
+
+        return returnedVal
+    }
+
+    private fun getBack(parent: String): String {
+        var newStr = ""
+        val parts = parent.split(".")
+        parts.forEachIndexed { i, s ->
+            if (i == parts.size - 1) {
+                return@forEachIndexed
             }
+            if (i != 0) {
+                newStr += "."
+            }
+            newStr += s
         }
-
-        if (value is Action) {
-            return executeAction(parent, value) ?: return v
-        }
-
-        return v
-
+        return newStr
     }
 
     fun error(message: String): JLRuntimeException {

@@ -101,6 +101,7 @@ object Parser {
             "array" -> Type.Array
             "?array" -> Type.MArray
             "any" -> Type.Any
+            "action" -> Type.Action
             else -> Type.MAny
         }
     }

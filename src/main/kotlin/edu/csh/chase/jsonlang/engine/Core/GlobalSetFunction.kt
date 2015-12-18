@@ -13,7 +13,7 @@ class GlobalSetFunction(e: Engine) : NativeFunction(e, "setGlobal", null) {
             ParameterDefinition("value", Type.MAny))
 
     override fun execute(parent: String, params: ParamMap): Value? {
-        engine.mem[engine.getValue(parent, params["name"]!!).value as String] = engine.getValue(parent, params["value"]!!)
+        engine.mem[params.getString("name")] = params.getValue("value")
         return null
     }
 

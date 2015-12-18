@@ -38,7 +38,7 @@
           "parameters": [
             {
               "name": "message",
-              "value": "x= *x"
+              "value": "*x"
             }
           ]
         }
