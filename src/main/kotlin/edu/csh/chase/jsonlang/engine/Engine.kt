@@ -4,8 +4,6 @@ import edu.csh.chase.jsonlang.engine.exceptions.JLRuntimeException
 import edu.csh.chase.jsonlang.engine.models.*
 import edu.csh.chase.jsonlang.engine.models.Function
 import edu.csh.chase.jsonlang.engine.parsing.CoreLoader
-import edu.csh.chase.jsonlang.engine.parsing.Parser
-import edu.csh.chase.kjson.JsonObject
 import java.util.*
 
 abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean) {
@@ -107,15 +105,10 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
             var checkedType = v.type
 
-            if (v.value is JsonObject) {
-                val act = Parser.unsafeParseAction(v.value)//Is the passed parameter actually an action?
-
-                if (act != null) {
-                    val ret = getReturnType(act)//Get the function it calls return type
-                    if (ret != null) {
-                        checkedType = ret
-                    }
-                }
+            if (v.value is Action) {
+                val ret = getReturnType(v.value) ?: throw error("Error executing function $parent.${function.name}. " +
+                        "Parameter ${it.name} expected ${it.type}. Got null from action ${v.value.name}")
+                checkedType = ret
             }
 
             if (!checkedType.isParentType(it.type)) {
@@ -168,10 +161,8 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
             }
         }
 
-        if (value is JsonObject) {
-            val action = Parser.unsafeParseAction(value) ?: return v
-            val value = executeAction(parent, action) ?: return v
-            return value
+        if (value is Action) {
+            return executeAction(parent, value) ?: return v
         }
 
         return v
