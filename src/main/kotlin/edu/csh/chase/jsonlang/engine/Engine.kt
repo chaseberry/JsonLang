@@ -93,13 +93,15 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         return if (func.returns == null) null else Value(r, func.returns!!)
     }
 
-    private fun parseParams(parent: String, function: Callable, action: Action): Map<String, Value> {
+    private fun parseParams(parent: String, function: Callable, action: Action): ParamMap {
         if (function.parameters.size != action.parameters.size) {
             throw error("Error executing function $parent.${function.name}. " +
                     "Expected ${function.parameters.size} parameters, but got ${action.parameters.size}")
         }
 
-        return function.parameters.toMap({ it.name }) {
+        val map = ParamMap(parent, this)
+
+        function.parameters.forEach {
             val v = action.parameters[it.name] ?: throw error("Error executing function $parent.${function.name}. " +
                     "Missing parameter ${it.name}")
 
@@ -116,9 +118,10 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
                         "Parameter passed to ${it.name} was incorrect. Expected ${it.type}, got ${v.type} ")
             }
 
-            action.parameters[it.name]!!
+            map.put(it.name, v)
         }
 
+        return map
     }
 
     fun getReturnType(action: Action): Type? {

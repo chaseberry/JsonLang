@@ -2,18 +2,18 @@ package edu.csh.chase.jsonlang.engine.Core
 
 import edu.csh.chase.jsonlang.engine.Engine
 import edu.csh.chase.jsonlang.engine.NativeFunction
+import edu.csh.chase.jsonlang.engine.ParamMap
 import edu.csh.chase.jsonlang.engine.models.ParameterDefinition
 import edu.csh.chase.jsonlang.engine.models.Type
-import edu.csh.chase.jsonlang.engine.models.Value
 
 class AddFunction(e: Engine) : NativeFunction(e, "+", Type.Any) {
 
     override val parameters: List<ParameterDefinition> = listOf(ParameterDefinition("i", Type.Any),
             ParameterDefinition("j", Type.Any))
 
-    override fun execute(parent: String, params: Map<String, Value>): Any? {
-        val i = engine.getValue(parent, params["i"]!!).value
-        val j = engine.getValue(parent, params["j"]!!).value
+    override fun execute(parent: String, params: ParamMap): Any? {
+        val i = params.getAnyM("i")
+        val j = params.getAnyM("j")
         
         if (i is Int && j is Int) {
             return i + j
