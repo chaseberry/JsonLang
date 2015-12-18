@@ -5,16 +5,20 @@
       "name": "main",
       "actions": [
         {
-          "name": "print",
+          "name": "set",
           "parameters": [
             {
-              "name": "message",
+              "name": "name",
+              "value": "x"
+            },
+            {
+              "name": "value",
               "value": {
                 "name": "if",
                 "parameters": [
                   {
                     "name": "condition",
-                    "value": false
+                    "value": true
                   },
                   {
                     "name": "then",
@@ -26,6 +30,15 @@
                   }
                 ]
               }
+            }
+          ]
+        },
+        {
+          "name": "print",
+          "parameters": [
+            {
+              "name": "message",
+              "value": "x= *x"
             }
           ]
         }
