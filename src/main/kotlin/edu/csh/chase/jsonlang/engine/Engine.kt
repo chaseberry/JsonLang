@@ -90,7 +90,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         val r = func.execute(parent, params)
 
         stack.pop()
-        return if (func.returns == null) null else Value(r, func.returns!!)
+        return r
     }
 
     private fun parseParams(parent: String, function: Callable, action: Action): ParamMap {
