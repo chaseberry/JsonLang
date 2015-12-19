@@ -22,6 +22,10 @@ class ParamMap(private val parent: String, private val engine: Engine) : HashMap
         return engine.getValue(parent, get(name)!!, name, Type.Number).value as Double
     }
 
+    fun getArray(name: String): List<Value> {
+        return (engine.getValue(parent, get(name)!!, name, Type.Array).value as List<*>).filterIsInstance<Value>()
+    }
+
     fun getAnyM(name: String): Any? {
         return engine.getValue(parent, get(name)!!, name, Type.MAny).value
     }

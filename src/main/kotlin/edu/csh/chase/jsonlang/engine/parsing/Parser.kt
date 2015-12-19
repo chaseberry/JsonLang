@@ -77,12 +77,14 @@ object Parser {
             is JsonObject -> {
                 val action = unsafeParseAction(value)
                 if (action == null) {
-                    Value(value, Type.Object)
+                    Value(value, Type.Object)//TODO needs to be pased into a Map<String, Value>
                 } else {
                     Value(action, Type.Action)
                 }
             }
-            is JsonArray -> Value(value, Type.Array)
+            is JsonArray -> {
+                Value(value.map { parseValue(value) }, Type.Array)
+            }
             null -> Value(value, Type.MAny)
             else -> Value(null, Type.MAny)
         }
