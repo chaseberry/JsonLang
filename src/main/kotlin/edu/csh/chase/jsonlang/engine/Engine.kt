@@ -120,7 +120,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         val returnedVal = if (value is String && value[0] == '*') {
             val varName = value.substring(1)
             val p = getBack(parent)
-            mem["$p.$varName"] ?: throw error("$p.$varName does not exist in memory")
+            mem["$p.$varName"] ?: throw error("'$p.$varName' does not exist in memory")
         } else if (value is Action) {
             executeAction(parent, value) ?: throw error("Error executing function $parent " +
                     "Parameter $name expected $expectedType. Got null from action ${value.name}")
@@ -129,7 +129,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         }
 
         if (expectedType != null && !returnedVal.type.isParentType(expectedType)) {
-            throw error("Error executing function $parent. " +
+            throw error("Error executing function '$parent'. " +
                     "Parameter $name expected $expectedType. Got ${returnedVal.type}")
         }
 

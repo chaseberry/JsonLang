@@ -83,7 +83,7 @@ object Parser {
                 }
             }
             is JsonArray -> {
-                Value(value.map { parseValue(value) }, Type.Array)
+                Value(value.map { parseValue(it) }, Type.Array)
             }
             null -> Value(value, Type.MAny)
             else -> Value(null, Type.MAny)

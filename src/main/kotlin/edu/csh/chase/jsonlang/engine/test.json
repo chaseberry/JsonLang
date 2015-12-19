@@ -18,7 +18,17 @@
                 "parameters": [
                   {
                     "name": "condition",
-                    "value": true
+                    "value": {
+                      "name": "||",
+                      "parameters": [
+                        {
+                          "name": "conditions",
+                          "value": [
+                            false, "hello"
+                          ]
+                        }
+                      ]
+                    }
                   },
                   {
                     "name": "then",

@@ -18,6 +18,8 @@ enum class Type(val value: String) {
             Type.MNumber -> this == Type.MNumber || this == Type.Number
             Type.Boolean -> this == Type.Boolean
             Type.MBoolean -> this == Type.Boolean || this == Type.MBoolean
+            Type.Array -> this == Type.Array
+            Type.MArray -> this == Type.Array || this == Type.MArray
             else -> throw RuntimeException("I need to finish this")
         }
     }
