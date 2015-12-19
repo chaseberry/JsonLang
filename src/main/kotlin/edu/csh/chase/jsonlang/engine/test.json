@@ -24,7 +24,11 @@
                         {
                           "name": "conditions",
                           "value": [
-                            false, "hello"
+                            false,
+                            {
+                              "name": "main.true",
+                              "parameters": []
+                            }
                           ]
                         }
                       ]
@@ -49,6 +53,23 @@
             {
               "name": "message",
               "value": "*x"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "true",
+      "returns": "boolean",
+      "actions": [
+        {
+          "name": "||",
+          "parameters": [
+            {
+              "name": "conditions",
+              "value": [
+                true
+              ]
             }
           ]
         }
