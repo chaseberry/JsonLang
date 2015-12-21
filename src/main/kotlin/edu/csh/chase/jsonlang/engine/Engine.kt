@@ -8,10 +8,10 @@ import java.util.*
 
 abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean) {
 
-    val stack = LinkedList<Frame>()
+    val stack = LinkedList<Frame>()//TODO Move the Memory into the stack
 
     val mem = HashMap<String, Value>()
-    
+
     private val coreFunctions = HashMap<String, NativeFunction>()
 
     init {
