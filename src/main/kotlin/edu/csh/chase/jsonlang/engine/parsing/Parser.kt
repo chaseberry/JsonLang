@@ -82,9 +82,7 @@ object Parser {
                     Value(action, Type.Action)
                 }
             }
-            is JsonArray -> {
-                Value(value.map { parseValue(it) }, Type.Array)
-            }
+            is JsonArray -> Value(value.map { parseValue(it) }, Type.Array)
             null -> Value(value, Type.MAny)
             else -> Value(null, Type.MAny)
         }

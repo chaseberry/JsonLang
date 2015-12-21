@@ -8,6 +8,10 @@ abstract class NativeFunction(val engine: Engine, override val name: String, ove
 
     abstract override val parameters: List<ParameterDefinition>
 
-    abstract fun execute(parent: String, params:ParamMap): Value?
+    abstract fun execute(parent: String, params: ParamMap): Value?
+
+    override fun equals(other: Any?): Boolean {
+        return other is NativeFunction && other.name == name
+    }
 
 }

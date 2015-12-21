@@ -11,7 +11,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
     val stack = LinkedList<Frame>()
 
     val mem = HashMap<String, Value>()
-    val coreFunctions = HashMap<String, NativeFunction>()
+    private val coreFunctions = HashMap<String, NativeFunction>()
 
     init {
         //init core functions
@@ -19,6 +19,16 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
             val func = it.getDeclaredConstructor(Engine::class.java).newInstance(this)
             coreFunctions[func.name] = func
         }
+    }
+
+    fun addFunction(func: NativeFunction) {
+        if (func.name.contains(".")) {
+            throw error("Error adding ${func.name}. Native function names cannot contains periods.")
+        }
+        if (func.name in coreFunctions) {
+            throw error("Error adding ${func.name}. Function already exists.")
+        }
+        coreFunctions[func.name] = func
     }
 
     abstract fun execute()
@@ -118,6 +128,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         val value = v.value
 
         val returnedVal = if (value is String && value[0] == '*') {
+            //TODO loop backwards through the stack checking each `level` of vars
             val varName = value.substring(1)
             val p = getBack(parent)
             mem["$p.$varName"] ?: throw error("'$p.$varName' does not exist in memory")
