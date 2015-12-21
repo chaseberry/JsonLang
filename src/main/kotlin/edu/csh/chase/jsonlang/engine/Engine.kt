@@ -63,6 +63,17 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         return if (function.returns == null) null else currentVal
     }
 
+    private fun executeNativeFunction(parent: String, func: NativeFunction, action: Action): Value? {
+        stack.push(Frame("$parent.${func.name}"))
+
+        val params = parseParams(parent, func, action)
+
+        val r = func.execute(parent, params)
+
+        stack.pop()
+        return r
+    }
+
     private fun executeAction(parent: String, action: Action): Value? {
         val func = findFunction(action.name)
         val r = if (func is NativeFunction) {
@@ -90,17 +101,6 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         }
         throw error("Function $name not found. Did you forget a Program name?")
 
-    }
-
-    private fun executeNativeFunction(parent: String, func: NativeFunction, action: Action): Value? {
-        stack.push(Frame("$parent.${func.name}"))
-
-        val params = parseParams(parent, func, action)
-
-        val r = func.execute(parent, params)
-
-        stack.pop()
-        return r
     }
 
     private fun parseParams(parent: String, function: Callable, action: Action): ParamMap {
