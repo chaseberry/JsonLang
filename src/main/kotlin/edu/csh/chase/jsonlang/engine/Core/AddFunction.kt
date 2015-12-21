@@ -8,7 +8,7 @@ import edu.csh.chase.jsonlang.engine.models.Type
 import edu.csh.chase.jsonlang.engine.models.Value
 import edu.csh.chase.jsonlang.engine.v
 
-class AddFunction(e: Engine) : NativeFunction(e, "+", Type.Any) {
+class AddFunction(e: Engine) : NativeFunction(e, "add", Type.Any) {
 
     override val parameters: List<ParameterDefinition> = listOf(ParameterDefinition("i", Type.Any),
             ParameterDefinition("j", Type.Any))

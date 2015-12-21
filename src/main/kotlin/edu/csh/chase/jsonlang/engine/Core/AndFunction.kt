@@ -8,7 +8,7 @@ import edu.csh.chase.jsonlang.engine.models.Type
 import edu.csh.chase.jsonlang.engine.models.Value
 import edu.csh.chase.jsonlang.engine.pd
 
-class OrFunction(e: Engine) : NativeFunction(e, "or", Type.Boolean) {
+class AndFunction(e: Engine) : NativeFunction(e, "and", Type.Boolean) {
 
     override val parameters: List<ParameterDefinition> = listOf(pd("conditions", Type.Array))
 
@@ -16,12 +16,12 @@ class OrFunction(e: Engine) : NativeFunction(e, "or", Type.Boolean) {
         val listParams = params.getArray("conditions")
         listParams.forEachIndexed { i, v ->
             val b = engine.getValue("$parent.$name", v, i.toString(), Type.Boolean)
-            if (b.value == true) {
-                return Value(true, Type.Boolean)
+            if (b.value == false) {
+                return Value(false, Type.Boolean)
             }
         }
 
-        return Value(false, Type.Boolean)
+        return Value(true, Type.Boolean)
     }
 
 }
