@@ -11,6 +11,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
     val stack = LinkedList<Frame>()
 
     val mem = HashMap<String, Value>()
+    
     private val coreFunctions = HashMap<String, NativeFunction>()
 
     init {
