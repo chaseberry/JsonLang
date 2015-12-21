@@ -63,7 +63,7 @@
       "returns": "boolean",
       "actions": [
         {
-          "name": "||",
+          "name": "or",
           "parameters": [
             {
               "name": "conditions",
