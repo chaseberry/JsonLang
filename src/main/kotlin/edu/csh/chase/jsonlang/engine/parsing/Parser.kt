@@ -63,6 +63,25 @@ object Parser {
         return Action(name, params)
     }
 
+    fun parseActionShorthand(obj: JsonObject, parent: String): Action {
+        if (obj.keySet.size != 1) {
+            throw ParseException("A shorthand action can only contain 1 top level key. Got ${obj.keySet.size}. At" +
+                    " $parent")
+        }
+
+        val name = obj.keySet.first()
+
+        val params = obj[name] as? JsonObject ?: throw ParseException("A shorthand action requires an object for parameters. " +
+                "At $parent.$name")
+        val paramList = HashMap<String, Value>()
+
+        params.forEach {
+            paramList.put(it.key, parseValue(it.value))
+        }
+
+        return Action(name, paramList)
+    }
+
     fun parseParameter(obj: JsonObject, parent: String): Parameter {
         val name = obj.getString("name") ?: throw ParseException("No 'name' in a parameter in action $parent")
         val value = parseValue(obj["value"])
@@ -77,7 +96,7 @@ object Parser {
             is JsonObject -> {
                 val action = unsafeParseAction(value)
                 if (action == null) {
-                    Value(value, Type.Object)//TODO needs to be pased into a Map<String, Value>
+                    Value(value, Type.Object)//TODO needs to be passed into a Map<String, Value>
                 } else {
                     Value(action, Type.Action)
                 }

@@ -1,0 +1,51 @@
+{
+  "name": "main",
+  "functions": [
+    {
+      "name": "main",
+      "actions": [
+        {
+          "set": {
+            "name": "x",
+            "value": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          }
+        },
+        {
+          "print": {
+            "message": "Hello World!"
+          }
+        },
+        {
+          "std.filter": {
+            "array": "*x",
+            "predicate": {
+              "odd": {
+                "number": "*element"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "filter",
+      "parameters": [
+        {
+          "name": "array",
+          "type": "array"
+        },
+        {
+          "name": "predicate",
+          "type": {"parameters":[], "returns":"boolean"}
+        }
+      ],
+      "returns": "array"
+    }
+  ]
+}
