@@ -90,9 +90,9 @@ object Parser {
 
     fun parseValue(value: Any?): Value {
         return when (value) {
-            is Number -> Value(value, RawType.Number)
-            is String -> Value(value, RawType.String)
-            is Boolean -> Value(value, RawType.Boolean)
+            is Number -> Value(value, Type(RawType.Number))
+            is String -> Value(value, Type(RawType.String))
+            is Boolean -> Value(value, Type(RawType.Boolean))
             is JsonObject -> {
                 val action = unsafeParseAction(value)
                 if (action == null) {
@@ -102,26 +102,49 @@ object Parser {
                 }
             }
             is JsonArray -> Value(value.map { parseValue(it) }, RawType.Array)
-            null -> Value(value, RawType.MAny)
-            else -> Value(null, RawType.MAny)
+            null -> Value(value, Type(RawType.MAny))
+            else -> Value(null, Type(RawType.MAny))
         }
     }
 
-    fun parseType(str: String): RawType {
+    fun parseType(str: String): Type {
+        if (str.contains(":")) {
+            return parseGenericType(str)
+        }
         return when (str.toLowerCase()) {
-            "number" -> RawType.Number
-            "?number" -> RawType.MNumber
-            "boolean" -> RawType.Boolean
-            "?boolean" -> RawType.MBoolean
-            "string" -> RawType.String
-            "?String" -> RawType.String
-            "object" -> RawType.Object
-            "?object" -> RawType.MObject
-            "array" -> RawType.Array
-            "?array" -> RawType.MArray
-            "any" -> RawType.Any
-            "action" -> RawType.Action
-            else -> RawType.MAny
+            "number" -> Type(RawType.Number)
+            "?number" -> Type(RawType.MNumber)
+            "boolean" -> Type(RawType.Boolean)
+            "?boolean" -> Type(RawType.MBoolean)
+            "string" -> Type(RawType.String)
+            "?String" -> Type(RawType.String)
+            "object" -> Type(RawType.Object)
+            "?object" -> Type(RawType.MObject)
+            "array" -> Type(RawType.Array)
+            "?array" -> Type(RawType.MArray)
+            "any" -> Type(RawType.Any)
+            "action" -> Type(RawType.Action)
+            else -> Type(RawType.MAny)
+        }
+    }
+
+    fun parseGenericType(str: String): Type {
+        val parts = str.split(":")
+        if (parts.size != 2) {
+            return Type(RawType.MAny)
+        }
+
+        val gt = parseType(parts[1])
+        if (gt is GenericType) {
+            throw ParseException("Generic Types")
+        }
+
+        return when (parts[0].toLowerCase()) {
+            "object" -> GenericType(RawType.Object, gt.type)
+            "array" -> GenericType(RawType.Array, gt.type)
+            "?object" -> GenericType(RawType.MObject, gt.type)
+            "?array" -> GenericType(RawType.MArray, gt.type)
+            else -> throw ParseException("Generic Types ")
         }
     }
 
