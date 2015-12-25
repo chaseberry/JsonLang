@@ -1,6 +1,6 @@
 package edu.csh.chase.jsonlang.engine.parsing
 
-import edu.csh.chase.jsonlang.engine.exceptions.ParseException
+import edu.csh.chase.jsonlang.engine.exceptions.JLParseException
 import edu.csh.chase.jsonlang.engine.models.Function
 import edu.csh.chase.jsonlang.engine.models.ParameterDefinition
 import edu.csh.chase.kjson.JsonObject
@@ -15,18 +15,18 @@ class JsonLangFunctionParser(val obj: JsonObject, val parent: String) {
     }
 
     private fun parse(): Function {
-        val name = obj.getString("name") ?: throw ParseException("No 'name' given to a function in $parent")
+        val name = obj.getString("name") ?: throw JLParseException("No 'name' given to a function in $parent")
         val arr = obj.getJsonArray("parameters")
         val params = arr?.map {
             if (it !is JsonObject) {
-                throw ParseException("A 'parameters' object must be an object in function $parent.$name")
+                throw JLParseException("A 'parameters' object must be an object in function $parent.$name")
             }
             parseParameterDefinition(it, "$parent.$name")
         }?.toArrayList()
-        val actionsArr = obj.getJsonArray("actions") ?: throw ParseException("No 'actions' array in function $parent.$name")
+        val actionsArr = obj.getJsonArray("actions") ?: throw JLParseException("No 'actions' array in function $parent.$name")
         val actions = actionsArr.map {
             if (it !is JsonObject) {
-                throw ParseException("A 'action' object bust be an object in function $parent.$name")
+                throw JLParseException("A 'action' object bust be an object in function $parent.$name")
             }
             JsonLangActionParser(it, "$parent.$name").action
         }.toArrayList()
@@ -37,8 +37,8 @@ class JsonLangFunctionParser(val obj: JsonObject, val parent: String) {
 
 
     private fun parseParameterDefinition(obj: JsonObject, parent: String): ParameterDefinition {
-        val name = obj.getString("name") ?: throw ParseException("No 'name' given to a 'parameters' object in $parent")
-        val type = obj.getString("type") ?: throw ParseException("NO 'type' give to a 'parameters' object $parent.$name")
+        val name = obj.getString("name") ?: throw JLParseException("No 'name' given to a 'parameters' object in $parent")
+        val type = obj.getString("type") ?: throw JLParseException("NO 'type' give to a 'parameters' object $parent.$name")
         return ParameterDefinition(name, JsonLangTypeParser(type, parent).type)
     }
 

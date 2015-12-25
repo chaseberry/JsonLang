@@ -1,6 +1,6 @@
 package edu.csh.chase.jsonlang.engine.parsing
 
-import edu.csh.chase.jsonlang.engine.exceptions.ParseException
+import edu.csh.chase.jsonlang.engine.exceptions.JLParseException
 import edu.csh.chase.jsonlang.engine.models.RawType
 import edu.csh.chase.jsonlang.engine.models.Type
 import edu.csh.chase.jsonlang.engine.models.Value
@@ -27,7 +27,7 @@ class JsonLangValueParser(val obj: Any?, val parent: String) {
     private fun parseObject(o: JsonObject): Value {
         return try {
             Value(JsonLangActionParser(o, parent).action, Type(RawType.Action))
-        } catch(e: ParseException) {
+        } catch(e: JLParseException) {
             val map = o.toMap({ it.key }) {
                 JsonLangValueParser(it.value, parent).value
             }

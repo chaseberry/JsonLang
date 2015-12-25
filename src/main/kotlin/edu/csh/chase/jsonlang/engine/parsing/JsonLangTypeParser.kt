@@ -1,6 +1,6 @@
 package edu.csh.chase.jsonlang.engine.parsing
 
-import edu.csh.chase.jsonlang.engine.exceptions.ParseException
+import edu.csh.chase.jsonlang.engine.exceptions.JLParseException
 import edu.csh.chase.jsonlang.engine.models.ActionType
 import edu.csh.chase.jsonlang.engine.models.GenericType
 import edu.csh.chase.jsonlang.engine.models.RawType
@@ -20,7 +20,7 @@ class JsonLangTypeParser(private val obj: Any, val parent: String) {
             //Just a type
             return parseStringType(obj)
         }
-        throw ParseException("Error parsing '$obj' at $parent")
+        throw JLParseException("Error parsing '$obj' at $parent")
     }
 
     private fun parseStringType(str: String): Type {
@@ -36,11 +36,11 @@ class JsonLangTypeParser(private val obj: Any, val parent: String) {
     }
 
     private fun parseActionType(obj: JsonObject): Type {
-        val parameters = obj.getJsonArray("parameters") ?: throw ParseException("")
+        val parameters = obj.getJsonArray("parameters") ?: throw JLParseException("")
         val returns = obj.getString("returns")
         return ActionType(parameters.map {
             if (it !is String) {
-                throw ParseException("A value in the parameters array is not a String. At $parent")
+                throw JLParseException("A value in the parameters array is not a String. At $parent")
             }
             parseTypeFromString(it)
         }.toList(), if (returns != null) parseTypeFromString(returns) else null)
@@ -60,7 +60,7 @@ class JsonLangTypeParser(private val obj: Any, val parent: String) {
             "?array" -> RawType.MArray
             "any" -> RawType.Any
             "action" -> RawType.Action
-            else -> throw ParseException("'$str' is not a valid Type. At $parent")
+            else -> throw JLParseException("'$str' is not a valid Type. At $parent")
         }
     }
 }
