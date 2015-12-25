@@ -14,7 +14,11 @@
                     "conditions": [
                       false,
                       {
-                        "main.true": {
+                        "and": {
+                          "conditions": [
+                            true,
+                            true
+                          ]
                         }
                       }
                     ]
