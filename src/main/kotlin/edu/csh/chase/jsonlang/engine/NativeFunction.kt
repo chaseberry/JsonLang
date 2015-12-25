@@ -1,10 +1,10 @@
 package edu.csh.chase.jsonlang.engine
 
 import edu.csh.chase.jsonlang.engine.models.ParameterDefinition
-import edu.csh.chase.jsonlang.engine.models.RawType
+import edu.csh.chase.jsonlang.engine.models.Type
 import edu.csh.chase.jsonlang.engine.models.Value
 
-abstract class NativeFunction(val engine: Engine, override val name: String, override val returns: RawType?) : Callable {
+abstract class NativeFunction(val engine: Engine, override val name: String, override val returns: Type?) : Callable {
 
     abstract override val parameters: List<ParameterDefinition>
 
@@ -12,6 +12,10 @@ abstract class NativeFunction(val engine: Engine, override val name: String, ove
 
     override fun equals(other: Any?): Boolean {
         return other is NativeFunction && other.name == name
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
     }
 
 }
