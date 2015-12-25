@@ -12,4 +12,6 @@ class GenericType(type: RawType, val generic: RawType) : Type(type) {
         return result
     }
 
+    override fun toString(): String = "${type.toString()}:${generic.toString()}"
+
 }

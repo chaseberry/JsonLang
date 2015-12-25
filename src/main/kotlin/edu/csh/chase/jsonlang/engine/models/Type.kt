@@ -10,4 +10,6 @@ open class Type(val type: RawType) {
         return type.hashCode()
     }
 
+    override fun toString(): String = type.toString()
+
 }
