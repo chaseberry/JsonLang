@@ -39,7 +39,7 @@ class JsonLangFunctionParser(val obj: JsonObject, val parent: String) {
     private fun parseParameterDefinition(obj: JsonObject, parent: String): ParameterDefinition {
         val name = obj.getString("name") ?: throw ParseException("No 'name' given to a 'parameters' object in $parent")
         val type = obj.getString("type") ?: throw ParseException("NO 'type' give to a 'parameters' object $parent.$name")
-        return ParameterDefinition(name, Parser.parseType(type, parent))
+        return ParameterDefinition(name, JsonLangTypeParser(type, parent).type)
     }
 
 }

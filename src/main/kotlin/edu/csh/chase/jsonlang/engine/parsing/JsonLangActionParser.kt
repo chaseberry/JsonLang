@@ -22,12 +22,18 @@ class JsonLangActionParser(val obj: JsonObject, val parent: String) {
     private fun parseNormalAction(obj: JsonObject, parent: String): Action {
         val name = obj.getString("name") ?: throw ParseException("No 'name' given to an action in $parent")
         val arr = obj.getJsonArray("parameters") ?: throw ParseException("No 'parameters' array in action $parent.$name")
-        val params = arr.map {
+        val params = arr.toMap({
             if ( it !is JsonObject) {
                 throw ParseException("A 'parameter' must be an object in action $parent.$name")
             }
-            Parser.parseParameter(it, "$parent.$name")
-        }.toArrayList().toMap({ it.name }, { it.value })
+            it.getString("name") ?: throw ParseException("A 'Parameter' must have a name in $parent.$name")
+        }) {
+            if ( it !is JsonObject) {
+                throw ParseException("A 'parameter' must be an object in action $parent.$name")
+            }
+            val pVal = it["value"]
+            JsonLangValueParser(pVal, parent).value
+        }
         return Action(name, params)
     }
 
@@ -39,7 +45,7 @@ class JsonLangActionParser(val obj: JsonObject, val parent: String) {
         val paramList = HashMap<String, Value>()
 
         params.forEach {
-            paramList.put(it.key, Parser.parseValue(it.value))
+            paramList.put(it.key, JsonLangValueParser(it.value, parent).value)
         }
 
         return Action(name, paramList)
