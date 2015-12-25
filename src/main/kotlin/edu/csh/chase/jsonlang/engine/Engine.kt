@@ -125,7 +125,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         return getValue(parent, v, name, null)
     }
 
-    fun getValue(parent: String, v: Value, name: String, expectedType: RawType?): Value {
+    fun getValue(parent: String, v: Value, name: String, expectedType: Type?): Value {
         val value = v.value
 
         val returnedVal = if (value is String && value[0] == '*') {
@@ -139,8 +139,8 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         } else {
             v
         }
-
-        if (expectedType != null && !returnedVal.type.type.isParentType(expectedType)) {
+        //TODO needs special logic for Generics now
+        if (expectedType != null && !returnedVal.type.type.isParentType(expectedType.type)) {
             throw error("Error executing function '$parent'. " +
                     "Parameter $name expected $expectedType. Got ${returnedVal.type}")
         }

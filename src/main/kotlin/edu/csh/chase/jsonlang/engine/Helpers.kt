@@ -16,3 +16,7 @@ fun numType() = Type(RawType.Number)
 fun stringType() = Type(RawType.String)
 
 fun anyType() = Type(RawType.Any)
+
+fun arrayType() = Type(RawType.Array)
+
+fun mAnyType() = Type(RawType.MAny)

@@ -6,4 +6,8 @@ open class Type(val type: RawType) {
         return other is Type && other.type == type
     }
 
+    override fun hashCode(): Int {
+        return type.hashCode()
+    }
+
 }
