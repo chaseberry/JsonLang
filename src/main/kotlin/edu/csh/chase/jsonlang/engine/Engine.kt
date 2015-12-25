@@ -140,7 +140,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
             v
         }
 
-        if (expectedType != null && !returnedVal.type.isParentType(expectedType)) {
+        if (expectedType != null && !returnedVal.type.type.isParentType(expectedType)) {
             throw error("Error executing function '$parent'. " +
                     "Parameter $name expected $expectedType. Got ${returnedVal.type}")
         }

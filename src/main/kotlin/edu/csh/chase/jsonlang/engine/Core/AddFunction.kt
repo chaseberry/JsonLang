@@ -1,44 +1,40 @@
 package edu.csh.chase.jsonlang.engine.Core
 
-import edu.csh.chase.jsonlang.engine.Engine
-import edu.csh.chase.jsonlang.engine.NativeFunction
-import edu.csh.chase.jsonlang.engine.ParamMap
+import edu.csh.chase.jsonlang.engine.*
 import edu.csh.chase.jsonlang.engine.models.ParameterDefinition
-import edu.csh.chase.jsonlang.engine.models.RawType
 import edu.csh.chase.jsonlang.engine.models.Value
-import edu.csh.chase.jsonlang.engine.v
 
-class AddFunction(e: Engine) : NativeFunction(e, "add", RawType.Any) {
+class AddFunction(e: Engine) : NativeFunction(e, "add", anyType()) {
 
-    override val parameters: List<ParameterDefinition> = listOf(ParameterDefinition("i", RawType.Any),
-            ParameterDefinition("j", RawType.Any))
+    override val parameters: List<ParameterDefinition> = listOf(ParameterDefinition("i", anyType()),
+            ParameterDefinition("j", anyType()))
 
     override fun execute(parent: String, params: ParamMap): Value? {
         val i = params.getAnyM("i")
         val j = params.getAnyM("j")
 
         if (i is Int && j is Int) {
-            return v(i + j, RawType.Number)
+            return v(i + j, numType())
         }
 
         if (i is Double && j is Double) {
-            return v(i + j, RawType.Number)
+            return v(i + j, numType())
         }
 
         if (i is String && j is String) {
-            return v(i + j, RawType.String)
+            return v(i + j, stringType())
         }
 
         if (i is Double && j is Int) {
-            return v(i + j.toDouble(), RawType.Number)
+            return v(i + j.toDouble(), numType())
         }
 
         if (i is Int && j is Double) {
-            return v(i.toDouble() + j, RawType.Number)
+            return v(i.toDouble() + j, numType())
         }
 
         if (i is Boolean && j is Boolean) {
-            return v(i || j, RawType.Boolean)
+            return v(i || j, booleanType())
         }
 
         /**

@@ -1,6 +1,7 @@
 package edu.csh.chase.jsonlang.engine
 
 import edu.csh.chase.jsonlang.engine.exceptions.JLRuntimeException
+import edu.csh.chase.jsonlang.engine.parsing.JsonLangParser
 import edu.csh.chase.kjson.JsonObject
 import java.io.BufferedReader
 import java.io.File
@@ -12,7 +13,7 @@ fun main(args: Array<String>) {
     val json = JsonObject(reader.readText())
     reader.close()
 
-    val program = Parser.parseProgram(json)
+    val program = JsonLangParser(json).program
 
     try {
         SingleProgramEngine(program).execute()
