@@ -38,11 +38,16 @@
       "parameters": [
         {
           "name": "array",
-          "type": "array"
+          "type": "array:T"
         },
         {
           "name": "predicate",
-          "type": {"parameters":[], "returns":"boolean"}
+          "type": {
+            "parameters": [
+              "T"
+            ],
+            "returns": "boolean"
+          }
         }
       ],
       "returns": "array"

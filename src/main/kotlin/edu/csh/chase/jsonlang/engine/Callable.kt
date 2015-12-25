@@ -1,7 +1,7 @@
 package edu.csh.chase.jsonlang.engine
 
 import edu.csh.chase.jsonlang.engine.models.ParameterDefinition
-import edu.csh.chase.jsonlang.engine.models.Type
+import edu.csh.chase.jsonlang.engine.models.RawType
 
 interface Callable {
 
@@ -9,6 +9,6 @@ interface Callable {
 
     val name: String
 
-    val returns: Type?
+    val returns: RawType?
 
 }

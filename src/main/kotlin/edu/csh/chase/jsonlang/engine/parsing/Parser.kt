@@ -90,38 +90,38 @@ object Parser {
 
     fun parseValue(value: Any?): Value {
         return when (value) {
-            is Number -> Value(value, Type.Number)
-            is String -> Value(value, Type.String)
-            is Boolean -> Value(value, Type.Boolean)
+            is Number -> Value(value, RawType.Number)
+            is String -> Value(value, RawType.String)
+            is Boolean -> Value(value, RawType.Boolean)
             is JsonObject -> {
                 val action = unsafeParseAction(value)
                 if (action == null) {
-                    Value(value, Type.Object)//TODO needs to be passed into a Map<String, Value>
+                    Value(value, RawType.Object)//TODO needs to be passed into a Map<String, Value>
                 } else {
-                    Value(action, Type.Action)
+                    Value(action, RawType.Action)
                 }
             }
-            is JsonArray -> Value(value.map { parseValue(it) }, Type.Array)
-            null -> Value(value, Type.MAny)
-            else -> Value(null, Type.MAny)
+            is JsonArray -> Value(value.map { parseValue(it) }, RawType.Array)
+            null -> Value(value, RawType.MAny)
+            else -> Value(null, RawType.MAny)
         }
     }
 
-    fun parseType(str: String): Type {
+    fun parseType(str: String): RawType {
         return when (str.toLowerCase()) {
-            "number" -> Type.Number
-            "?number" -> Type.MNumber
-            "boolean" -> Type.Boolean
-            "?boolean" -> Type.MBoolean
-            "string" -> Type.String
-            "?String" -> Type.String
-            "object" -> Type.Object
-            "?object" -> Type.MObject
-            "array" -> Type.Array
-            "?array" -> Type.MArray
-            "any" -> Type.Any
-            "action" -> Type.Action
-            else -> Type.MAny
+            "number" -> RawType.Number
+            "?number" -> RawType.MNumber
+            "boolean" -> RawType.Boolean
+            "?boolean" -> RawType.MBoolean
+            "string" -> RawType.String
+            "?String" -> RawType.String
+            "object" -> RawType.Object
+            "?object" -> RawType.MObject
+            "array" -> RawType.Array
+            "?array" -> RawType.MArray
+            "any" -> RawType.Any
+            "action" -> RawType.Action
+            else -> RawType.MAny
         }
     }
 

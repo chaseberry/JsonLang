@@ -125,7 +125,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         return getValue(parent, v, name, null)
     }
 
-    fun getValue(parent: String, v: Value, name: String, expectedType: Type?): Value {
+    fun getValue(parent: String, v: Value, name: String, expectedType: RawType?): Value {
         val value = v.value
 
         val returnedVal = if (value is String && value[0] == '*') {
