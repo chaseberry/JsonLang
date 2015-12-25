@@ -42,13 +42,13 @@ object Parser {
             parseAction(it, "$parent.$name")
         }.toArrayList()
         val returns = obj.getString("returns")
-        return Function(name, params ?: ArrayList(), actions, if (returns != null) parseType(returns) else null)
+        return Function(name, params ?: ArrayList(), actions, if (returns != null) parseType(returns, parent) else null)
     }
 
     fun parseParameterDefinition(obj: JsonObject, parent: String): ParameterDefinition {
         val name = obj.getString("name") ?: throw ParseException("No 'name' given to a 'parameters' object in $parent")
         val type = obj.getString("type") ?: throw ParseException("NO 'type' give to a 'parameters' object $parent.$name")
-        return ParameterDefinition(name, parseType(type))
+        return ParameterDefinition(name, parseType(type, parent))
     }
 
     fun parseAction(obj: JsonObject, parent: String): Action {
@@ -71,8 +71,8 @@ object Parser {
 
         val name = obj.keySet.first()
 
-        val params = obj[name] as? JsonObject ?: throw ParseException("A shorthand action requires an object for parameters. " +
-                "At $parent.$name")
+        val params = obj[name] as? JsonObject ?: throw ParseException("A shorthand action requires an object for " +
+                "parameters. At $parent.$name")
         val paramList = HashMap<String, Value>()
 
         params.forEach {
@@ -96,20 +96,20 @@ object Parser {
             is JsonObject -> {
                 val action = unsafeParseAction(value)
                 if (action == null) {
-                    Value(value, RawType.Object)//TODO needs to be passed into a Map<String, Value>
+                    Value(value, Type(RawType.Object))//TODO needs to be passed into a Map<String, Value>
                 } else {
-                    Value(action, RawType.Action)
+                    Value(action, Type(RawType.Action))
                 }
             }
-            is JsonArray -> Value(value.map { parseValue(it) }, RawType.Array)
+            is JsonArray -> Value(value.map { parseValue(it) }, Type(RawType.Array))
             null -> Value(value, Type(RawType.MAny))
             else -> Value(null, Type(RawType.MAny))
         }
     }
 
-    fun parseType(str: String): Type {
+    fun parseType(str: String, parent: String): Type {
         if (str.contains(":")) {
-            return parseGenericType(str)
+            return parseGenericType(str, parent)
         }
         return when (str.toLowerCase()) {
             "number" -> Type(RawType.Number)
@@ -124,19 +124,19 @@ object Parser {
             "?array" -> Type(RawType.MArray)
             "any" -> Type(RawType.Any)
             "action" -> Type(RawType.Action)
-            else -> Type(RawType.MAny)
+            else -> throw ParseException("'str' is not a Type. At $parent")
         }
     }
 
-    fun parseGenericType(str: String): Type {
+    fun parseGenericType(str: String, parent: String): Type {
         val parts = str.split(":")
         if (parts.size != 2) {
             return Type(RawType.MAny)
         }
 
-        val gt = parseType(parts[1])
+        val gt = parseType(parts[1], parent)
         if (gt is GenericType) {
-            throw ParseException("Generic Types")
+            throw ParseException("The sub-type of a Generic Type cannot be a Generic Type. At $parent")
         }
 
         return when (parts[0].toLowerCase()) {
@@ -144,7 +144,8 @@ object Parser {
             "array" -> GenericType(RawType.Array, gt.type)
             "?object" -> GenericType(RawType.MObject, gt.type)
             "?array" -> GenericType(RawType.MArray, gt.type)
-            else -> throw ParseException("Generic Types ")
+            else -> throw ParseException("The main type of a Generic Type must be either ?Array, ?Object, Array, or Object. " +
+                    "At $parent")
         }
     }
 
