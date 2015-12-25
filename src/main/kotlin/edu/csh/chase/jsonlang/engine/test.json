@@ -38,15 +38,11 @@
       "returns": "boolean",
       "actions": [
         {
-          "name": "or",
-          "parameters": [
-            {
-              "name": "conditions",
-              "value": [
-                true
-              ]
-            }
-          ]
+          "or": {
+            "conditions": [
+              true
+            ]
+          }
         }
       ]
     }
