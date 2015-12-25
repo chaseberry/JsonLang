@@ -1,7 +1,6 @@
 package edu.csh.chase.jsonlang.engine.parsing
 
 import edu.csh.chase.jsonlang.engine.exceptions.ParseException
-import edu.csh.chase.jsonlang.engine.models.Action
 import edu.csh.chase.jsonlang.engine.models.Function
 import edu.csh.chase.jsonlang.engine.models.ParameterDefinition
 import edu.csh.chase.kjson.JsonObject
@@ -29,24 +28,13 @@ class JsonLangFunctionParser(val obj: JsonObject, val parent: String) {
             if (it !is JsonObject) {
                 throw ParseException("A 'action' object bust be an object in function $parent.$name")
             }
-            parseAction(it, "$parent.$name")
+            JsonLangActionParser(it, "$parent.$name").action
         }.toArrayList()
         val returns = obj.getString("returns")
         val returnType = if (returns != null) JsonLangTypeParser(returns, parent) else null
         return Function(name, params ?: ArrayList(), actions, returnType?.type)
     }
 
-    private fun parseAction(obj: JsonObject, parent: String): Action {
-        val name = obj.getString("name") ?: throw ParseException("No 'name' given to an action in $parent")
-        val arr = obj.getJsonArray("parameters") ?: throw ParseException("No 'parameters' array in action $parent.$name")
-        val params = arr.map {
-            if ( it !is JsonObject) {
-                throw ParseException("A 'parameter' must be an object in action $parent.$name")
-            }
-            Parser.parseParameter(it, "$parent.$name")
-        }.toArrayList().toMap({ it.name }, { it.value })
-        return Action(name, params)
-    }
 
     private fun parseParameterDefinition(obj: JsonObject, parent: String): ParameterDefinition {
         val name = obj.getString("name") ?: throw ParseException("No 'name' given to a 'parameters' object in $parent")
