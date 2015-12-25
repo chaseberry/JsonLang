@@ -9,7 +9,9 @@ import edu.csh.chase.kjson.JsonObject
 
 class JsonLangTypeParser(private val obj: Any, val parent: String) {
 
-    fun parse(): Type {
+    val type: Type by lazy { parse() }
+
+    private fun parse(): Type {
         if (obj is JsonObject) {
             //Action with specific type
             return parseActionType(obj)
