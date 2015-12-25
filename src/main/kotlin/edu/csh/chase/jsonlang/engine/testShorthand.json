@@ -49,6 +49,7 @@
             "returns": "boolean"
           }
         }
+
       ],
       "returns": "array"
     }
