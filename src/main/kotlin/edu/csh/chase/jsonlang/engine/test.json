@@ -5,56 +5,31 @@
       "name": "main",
       "actions": [
         {
-          "name": "set",
-          "parameters": [
-            {
-              "name": "name",
-              "value": "x"
-            },
-            {
-              "name": "value",
-              "value": {
-                "name": "if",
-                "parameters": [
-                  {
-                    "name": "condition",
-                    "value": {
-                      "name": "||",
-                      "parameters": [
-                        {
-                          "name": "conditions",
-                          "value": [
-                            false,
-                            {
-                              "name": "main.true",
-                              "parameters": []
-                            }
-                          ]
+          "set": {
+            "name": "x",
+            "value": {
+              "if": {
+                "condition": {
+                  "or": {
+                    "conditions": [
+                      false,
+                      {
+                        "main.true": {
                         }
-                      ]
-                    }
-                  },
-                  {
-                    "name": "then",
-                    "value": 5
-                  },
-                  {
-                    "name": "else",
-                    "value": "fuck"
+                      }
+                    ]
                   }
-                ]
+                },
+                "then": 5,
+                "else": "fuck"
               }
             }
-          ]
+          }
         },
         {
-          "name": "print",
-          "parameters": [
-            {
-              "name": "message",
-              "value": "*x"
-            }
-          ]
+          "print": {
+            "message": "*x"
+          }
         }
       ]
     },
