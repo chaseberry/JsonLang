@@ -125,7 +125,6 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         return getValue(parent, v, name, null)
     }
 
-    //TODO need logic to check if the type required is an action(For lambda like expressions)
     fun getValue(parent: String, v: Value, name: String, expectedType: Type?): Value {
         val value = v.value
 
