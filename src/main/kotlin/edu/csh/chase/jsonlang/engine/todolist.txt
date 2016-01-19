@@ -1,2 +1,5 @@
 Finish Generics
 
+Move memory to the stack -> Requires modifying the Frame Object
+Fix up the global memory holding
+

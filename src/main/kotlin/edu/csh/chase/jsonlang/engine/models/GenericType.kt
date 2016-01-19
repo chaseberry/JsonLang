@@ -7,9 +7,7 @@ class GenericType(type: RawType, val generic: RawType) : Type(type) {
     }
 
     override fun hashCode(): Int {
-        var result = super.hashCode()
-        result += 31 * result + generic.hashCode()
-        return result
+        return 31 * super.hashCode() + generic.hashCode()
     }
 
     override fun toString(): String = "${type.toString()}:${generic.toString()}"
