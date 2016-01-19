@@ -38,18 +38,23 @@
       "parameters": [
         {
           "name": "array",
-          "type": "array:T"
+          "type": "array:?Any"
         },
         {
           "name": "predicate",
           "type": {
             "parameters": [
-              "T"
+              {
+                "name": "element",
+                "type": "?Any"
+              },
+              {
+                "element": "?Any"
+              }
             ],
             "returns": "boolean"
           }
         }
-
       ],
       "returns": "array"
     }

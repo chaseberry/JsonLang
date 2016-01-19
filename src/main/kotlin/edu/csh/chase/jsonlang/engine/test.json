@@ -47,6 +47,17 @@
               true
             ]
           }
+        },
+        {
+          "name": "or",
+          "parameters": [
+            {
+              "name": "conditions",
+              "value": [
+                true
+              ]
+            }
+          ]
         }
       ]
     }

@@ -1,12 +1,12 @@
 package edu.csh.chase.jsonlang.engine.parsing
 
-import edu.csh.chase.jsonlang.engine.exceptions.JLParseException
 import edu.csh.chase.jsonlang.engine.models.ActionType
 import edu.csh.chase.jsonlang.engine.models.GenericType
 import edu.csh.chase.jsonlang.engine.models.RawType
 import edu.csh.chase.jsonlang.engine.models.Type
 import edu.csh.chase.jsonlang.engine.parseError
 import edu.csh.chase.kjson.JsonObject
+import java.util.*
 
 class JsonLangTypeParser(private val obj: Any, val parent: String) {
 
@@ -39,12 +39,15 @@ class JsonLangTypeParser(private val obj: Any, val parent: String) {
     private fun parseActionType(obj: JsonObject): Type {
         val parameters = obj.getJsonArray("parameters") ?: throw parseError("No 'parameters' array given to action", parent)
         val returns = obj.getString("returns")
-        return ActionType(parameters.map {
-            if (it !is String) {
-                throw parseError("A value in the parameters array is not a String", parent)
+        val map = HashMap<String, Type>()
+        parameters.forEach {
+            if (it !is JsonObject) {
+                throw parseError("'$it' in parameters array is not an object", parent)
             }
-            parseTypeFromString(it)
-        }.toList(), if (returns != null) parseTypeFromString(returns) else null)
+            val def = JsonLangParameterDefinitionParser(it, parent).parameterDefinition
+            map[def.name] = def.type
+        }
+        return ActionType(map, if (returns != null) parseTypeFromString(returns) else null)
     }
 
     private fun parseTypeFromString(str: String): RawType {
