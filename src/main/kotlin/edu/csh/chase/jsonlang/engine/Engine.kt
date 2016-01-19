@@ -57,6 +57,22 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         throw error("$name was not found.")
     }
 
+    public fun setGlobalMemoryValue(name: String, value: Value) {
+        globalMemory[name] = value
+    }
+
+    public fun getGlobalMemoryValue(name: String): Value {
+        return globalMemory[name] ?: throw error("$name was not found in global memory.")
+    }
+
+    public fun removeGlobalMemoryValue(name: String) {
+        if (name in globalMemory) {
+            globalMemory.remove(name)
+            return
+        }
+        throw error("$name was not found in global memory.")
+    }
+
     fun executeFunction(parent: String, function: Function, params: Map<String, Value>? = null): Value? {
         stack.push(Frame("$parent.${function.name}"))
         params?.forEach {
@@ -169,7 +185,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
         return returnedVal
     }
-    
+
     fun error(message: String): JLRuntimeException {
         return JLRuntimeException(globalMemory, stack, message)
     }

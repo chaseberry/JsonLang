@@ -10,10 +10,6 @@ class GlobalGetFunction(e: Engine) : NativeFunction(e, "getGlobal", mAnyType()) 
 
     override fun execute(parent: String, params: ParamMap): Value? {
         val name = params.getString("name")
-        if (name !in engine.mem) {
-            throw engine.error("Error executing native function ${this.name} at $parent.${this.name}. " +
-                    "$name is not defined in this memspace")
-        }
-        return engine.mem[name]
+        return engine.getGlobalMemoryValue(name)
     }
 }
