@@ -129,7 +129,6 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         val value = v.value
 
         val returnedVal = if (value is String && value[0] == '*') {
-            //TODO loop backwards through the stack checking each `level` of vars
             val varName = value.substring(1)
             val p = getBack(parent)
             mem["$p.$varName"] ?: throw error("'$p.$varName' does not exist in memory")
@@ -139,7 +138,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         } else {
             v
         }
-        //TODO needs special logic for Generics now
+
         if (expectedType != null && !returnedVal.type.type.isParentType(expectedType.type)) {
             throw error("Error executing function '$parent'. " +
                     "Parameter $name expected $expectedType. Got ${returnedVal.type}")
