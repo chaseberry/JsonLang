@@ -8,9 +8,9 @@ import java.util.*
 
 abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean) {
 
-    val stack = LinkedList<Frame>()//TODO Move the Memory into the stack
+    private val stack = LinkedList<Frame>()//TODO Move the Memory into the stack
 
-    val mem = HashMap<String, Value>()
+    private val globalMemory = HashMap<String, Value>()//Accesible anywhere with globalGet and globalSet
 
     private val coreFunctions = HashMap<String, NativeFunction>()
 
@@ -22,7 +22,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         }
     }
 
-    fun addFunction(func: NativeFunction) {
+    public fun addFunction(func: NativeFunction) {
         if (func.name.contains(".")) {
             throw error("Error adding ${func.name}. Native function names cannot contains periods.")
         }
@@ -34,6 +34,45 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
     abstract fun execute()
 
+    public fun setFrameMemoryValue(name: String, value: Value) {
+        val frame = stack.peek() ?: throw error("Stack is empty. How did you even manage that?")
+        frame.memory[name] = value
+    }
+
+    public fun getFrameMemoryValue(name: String): Value {
+        stack.forEach {
+            if (name in it.memory) {
+                return it.memory[name]!!
+            }
+        }
+        throw error("$name was not found.")
+    }
+
+    public fun removeFrameMemoryValue(name: String) {
+        stack.forEach {
+            if (name in it.memory) {
+                it.memory.remove(name)
+            }
+        }
+        throw error("$name was not found.")
+    }
+
+    public fun setGlobalMemoryValue(name: String, value: Value) {
+        globalMemory[name] = value
+    }
+
+    public fun getGlobalMemoryValue(name: String): Value {
+        return globalMemory[name] ?: throw error("$name was not found in global memory.")
+    }
+
+    public fun removeGlobalMemoryValue(name: String) {
+        if (name in globalMemory) {
+            globalMemory.remove(name)
+            return
+        }
+        throw error("$name was not found in global memory.")
+    }
+
     fun executeFunction(parent: String, function: Function, params: Map<String, Value>? = null): Value? {
         stack.push(Frame("$parent.${function.name}"))
         params?.forEach {
@@ -42,14 +81,14 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
             if (v.type != it.value.type) {
                 throw error("$parent.${function.name} parameter expected type ${it.value.type}. Got ${v.type}")
             }
-            mem["$parent.${function.name}.${it.key}"] = v
+            setFrameMemoryValue(it.key, v)
         }
         var currentVal: Value? = null
         function.actions.forEach {
             currentVal = executeAction("$parent.${function.name}", it)
         }
         params?.forEach {
-            mem.remove("$parent.${function.name}.${it.key}")
+            removeFrameMemoryValue(it.key)
         }
 
         if (currentVal == null && function.returns != null) {
@@ -130,8 +169,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
         val returnedVal = if (value is String && value[0] == '*') {
             val varName = value.substring(1)
-            val p = getBack(parent)
-            mem["$p.$varName"] ?: throw error("'$p.$varName' does not exist in memory")
+            getFrameMemoryValue(varName)
         } else if (value is Action) {
             executeAction(parent, value) ?: throw error("Error executing function $parent " +
                     "Parameter $name expected $expectedType. Got null from action ${value.name}")
@@ -148,23 +186,8 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         return returnedVal
     }
 
-    private fun getBack(parent: String): String {
-        var newStr = ""
-        val parts = parent.split(".")
-        parts.forEachIndexed { i, s ->
-            if (i == parts.size - 1) {
-                return@forEachIndexed
-            }
-            if (i != 0) {
-                newStr += "."
-            }
-            newStr += s
-        }
-        return newStr
-    }
-
     fun error(message: String): JLRuntimeException {
-        return JLRuntimeException(mem, stack, message)
+        return JLRuntimeException(globalMemory, stack, message)
     }
 
 }

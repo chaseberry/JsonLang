@@ -11,7 +11,7 @@ class SetFunction(e: Engine) : NativeFunction(e, "set", null) {
 
     override fun execute(parent: String, params: ParamMap): Value? {
         val key = "$parent.${params.getString("name")}"
-        engine.mem[key] = params.getValue("value")
+        engine.setFrameMemoryValue(key, params.getValue("value"))
         return null
     }
 }
