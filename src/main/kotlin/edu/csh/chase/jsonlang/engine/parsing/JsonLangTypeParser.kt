@@ -63,6 +63,7 @@ class JsonLangTypeParser(private val obj: Any, val parent: String) {
             "array" -> RawType.Array
             "?array" -> RawType.MArray
             "any" -> RawType.Any
+            "?any" -> RawType.MAny
             "action" -> RawType.Action
             else -> throw parseError("'$str' is not a valid Type.", parent)
         }

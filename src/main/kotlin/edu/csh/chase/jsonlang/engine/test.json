@@ -3,6 +3,7 @@
   "functions": [
     {
       "name": "main",
+      "returns": "?Any",
       "actions": [
         {
           "set": {
@@ -13,6 +14,11 @@
         {
           "print": {
             "message": "*x"
+          }
+        },
+        {
+          "literal": {
+            "value": 0
           }
         }
       ]
