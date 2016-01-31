@@ -35,7 +35,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
     abstract fun execute()
 
     public fun setFrameMemoryValue(name: String, value: Value) {
-        val frame = stack.peek() ?: throw error("Stack is empty. How did you even manage that?")
+        val frame = stack[1]
         frame.memory[name] = value
     }
 

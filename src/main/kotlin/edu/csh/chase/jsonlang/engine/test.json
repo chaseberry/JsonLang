@@ -7,57 +7,13 @@
         {
           "set": {
             "name": "x",
-            "value": {
-              "if": {
-                "condition": {
-                  "or": {
-                    "conditions": [
-                      false,
-                      {
-                        "and": {
-                          "conditions": [
-                            true,
-                            true
-                          ]
-                        }
-                      }
-                    ]
-                  }
-                },
-                "then": 5,
-                "else": "fuck"
-              }
-            }
+            "value": 5
           }
         },
         {
           "print": {
             "message": "*x"
           }
-        }
-      ]
-    },
-    {
-      "name": "true",
-      "returns": "boolean",
-      "actions": [
-        {
-          "or": {
-            "conditions": [
-              true
-            ]
-          }
-        },
-        {
-          "name": "or",
-          "parameters": [
-            {
-              "name": "conditions",
-              "value": [
-                true
-              ]
-            }
-          ]
         }
       ]
     }

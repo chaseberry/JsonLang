@@ -10,7 +10,7 @@ class SetFunction(e: Engine) : NativeFunction(e, "set", null) {
             ParameterDefinition("value", mAnyType()))
 
     override fun execute(parent: String, params: ParamMap): Value? {
-        val key = "$parent.${params.getString("name")}"
+        val key = params.getString("name")
         engine.setFrameMemoryValue(key, params.getValue("value"))
         return null
     }

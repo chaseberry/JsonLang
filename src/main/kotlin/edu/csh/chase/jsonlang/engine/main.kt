@@ -17,7 +17,6 @@ fun main(args: Array<String>) {
 
     try {
         SingleProgramEngine(program).execute()
-
     } catch(e: JLRuntimeException) {
         println("Error occurred running ${program.name}")
         println("Error: ${e.message}")
