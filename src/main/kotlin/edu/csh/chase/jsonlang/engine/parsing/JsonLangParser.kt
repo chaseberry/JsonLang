@@ -1,5 +1,6 @@
 package edu.csh.chase.jsonlang.engine.parsing
 
+import edu.csh.chase.jsonlang.engine.models.Function
 import edu.csh.chase.jsonlang.engine.models.Program
 import edu.csh.chase.jsonlang.engine.parseError
 import edu.csh.chase.kjson.JsonObject
@@ -20,7 +21,7 @@ class JsonLangParser(private val obj: JsonObject) {
                 throw parseError("A 'function' must be an object in program", name)
             }
             JsonLangFunctionParser(it, "$name").function
-        }.toArrayList()
+        }.toCollection(arrayListOf<Function>())
         return Program(name, functions)
     }
 

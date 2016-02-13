@@ -28,7 +28,7 @@ class JsonLangValueParser(val obj: Any?, val parent: String) {
         return try {
             Value(JsonLangActionParser(o, parent).action, Type(RawType.Action))
         } catch(e: JLParseException) {
-            val map = o.toMap({ it.key }) {
+            val map = o.associateBy({ it.key }) {
                 JsonLangValueParser(it.value, parent).value
             }
             Value(map, Type(RawType.Object))

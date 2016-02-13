@@ -22,7 +22,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         }
     }
 
-    public fun addFunction(func: NativeFunction) {
+    fun addFunction(func: NativeFunction) {
         if (func.name.contains(".")) {
             throw error("Error adding ${func.name}. Native function names cannot contains periods.")
         }
@@ -34,12 +34,12 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
 
     abstract fun execute()
 
-    public fun setFrameMemoryValue(name: String, value: Value) {
+    fun setFrameMemoryValue(name: String, value: Value) {
         val frame = stack[1]
         frame.memory[name] = value
     }
 
-    public fun getFrameMemoryValue(name: String): Value {
+    fun getFrameMemoryValue(name: String): Value {
         stack.forEach {
             if (name in it.memory) {
                 return it.memory[name]!!
@@ -48,7 +48,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         throw error("$name was not found.")
     }
 
-    public fun removeFrameMemoryValue(name: String) {
+    fun removeFrameMemoryValue(name: String) {
         stack.forEach {
             if (name in it.memory) {
                 it.memory.remove(name)
@@ -57,15 +57,15 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
         throw error("$name was not found.")
     }
 
-    public fun setGlobalMemoryValue(name: String, value: Value) {
+    fun setGlobalMemoryValue(name: String, value: Value) {
         globalMemory[name] = value
     }
 
-    public fun getGlobalMemoryValue(name: String): Value {
+    fun getGlobalMemoryValue(name: String): Value {
         return globalMemory[name] ?: throw error("$name was not found in global memory.")
     }
 
-    public fun removeGlobalMemoryValue(name: String) {
+    fun removeGlobalMemoryValue(name: String) {
         if (name in globalMemory) {
             globalMemory.remove(name)
             return
@@ -95,7 +95,7 @@ abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean)
             throw error("$parent.${function.name} returns ${function.returns}. No value was returned from last action.")
         }
 
-        if (currentVal?.type != function.returns) {
+        if (currentVal != null && function.returns != null && currentVal!!.type.type.isParentType(function.returns.type)) {
             throw error("$parent.${function.name} returns ${function.returns}. Got ${currentVal?.type}")
         }
 

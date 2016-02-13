@@ -23,7 +23,7 @@ class JsonLangActionParser(val obj: JsonObject, val parent: String) {
     private fun parseNormalAction(obj: JsonObject, parent: String): Action {
         val name = obj.getString("name") ?: throw parseError("No 'name' given to action", parent)
         val arr = obj.getJsonArray("parameters") ?: throw parseError("No 'parameters' array in action", "$parent.$name")
-        val params = arr.toMap({
+        val params = arr.associateBy({
             if ( it !is JsonObject) {
                 throw JLParseException("A 'parameter' must be an object in action", "$parent.$name")
             }
