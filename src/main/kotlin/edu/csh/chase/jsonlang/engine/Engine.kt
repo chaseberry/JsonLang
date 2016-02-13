@@ -1,12 +1,14 @@
 package edu.csh.chase.jsonlang.engine
 
 import edu.csh.chase.jsonlang.engine.exceptions.JLRuntimeException
-import edu.csh.chase.jsonlang.engine.models.*
+import edu.csh.chase.jsonlang.engine.models.Action
 import edu.csh.chase.jsonlang.engine.models.Function
+import edu.csh.chase.jsonlang.engine.models.Type
+import edu.csh.chase.jsonlang.engine.models.Value
 import edu.csh.chase.jsonlang.engine.parsing.CoreLoader
 import java.util.*
 
-abstract class Engine(val programs: ArrayList<Program>) {
+abstract class Engine(val programs: List<Program<out Callable>>) {
 
     private val stack = LinkedList<Frame>()//TODO Move the Memory into the stack
 

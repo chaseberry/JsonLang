@@ -1,16 +1,14 @@
-package edu.csh.chase.jsonlang.engine.models
+package edu.csh.chase.jsonlang.engine
 
-import java.util.*
-
-data class Program(val name: String,
-              val functions: ArrayList<Function>) {
+abstract class Program<T : Callable>(val name: String,
+                                     val functions: List<T>) {
 
     fun containsFunction(name: String): Boolean {
         functions.forEach { if (it.name == name) return true }
         return false
     }
 
-    fun getFunction(name: String): Function? {
+    fun getFunction(name: String): T? {
         functions.forEach { if (it.name == name) return it }
         return null
     }

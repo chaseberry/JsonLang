@@ -1,9 +1,9 @@
 package edu.csh.chase.jsonlang.engine
 
-import edu.csh.chase.jsonlang.engine.models.Program
+import edu.csh.chase.jsonlang.engine.models.InterpProgram
 
-class SingleProgramEngine(val program: Program, initWithStdLid: Boolean = true) :
-        Engine(arrayListOf(program), initWithStdLid) {
+class SingleProgramEngine(val program: InterpProgram, initWithStdLid: Boolean = true) :
+        Engine(listOf(program)) {
 
     override fun execute() {
         if (!program.containsFunction("main")) {
