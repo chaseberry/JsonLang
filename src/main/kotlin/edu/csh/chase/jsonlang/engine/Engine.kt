@@ -6,7 +6,7 @@ import edu.csh.chase.jsonlang.engine.models.Function
 import edu.csh.chase.jsonlang.engine.parsing.CoreLoader
 import java.util.*
 
-abstract class Engine(val programs: ArrayList<Program>, initWithStdLib: Boolean) {
+abstract class Engine(val programs: ArrayList<Program>) {
 
     private val stack = LinkedList<Frame>()//TODO Move the Memory into the stack
 
