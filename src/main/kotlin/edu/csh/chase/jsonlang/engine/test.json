@@ -3,12 +3,20 @@
   "functions": [
     {
       "name": "main",
-      "returns": "?Any",
       "actions": [
         {
           "set": {
             "name": "x",
-            "value": 5
+            "value": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ]
           }
         },
         {
@@ -17,8 +25,33 @@
           }
         },
         {
-          "literal": {
-            "value": 0
+          "stdlib.filter": {
+            "list": "*x",
+            "predicate": {
+              "literal": {
+                "value": false
+              }
+            }
+          }
+        },
+        {
+          "print": {
+            "message": "*x"
+          }
+        }
+      ]
+    },
+    {
+      "name": "false",
+      "returns": "Boolean",
+      "parameters": [
+        {
+          "element": "?Any"
+        }
+      ],
+      "actions": [
+        {
+          "false": {
           }
         }
       ]
