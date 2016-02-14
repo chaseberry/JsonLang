@@ -1,5 +1,6 @@
 package edu.csh.chase.jsonlang.engine
 
+import edu.csh.chase.jsonlang.engine.models.Action
 import edu.csh.chase.jsonlang.engine.models.Value
 import java.util.*
 
@@ -29,8 +30,17 @@ class ParamMap(private val parent: String, private val engine: Engine) : HashMap
         return engine.getValue(parent, get(name)!!, name, mAnyType()).value
     }
 
+    fun getList(name: String): List<Any?> {
+        return engine.getValue(parent, get(name)!!, name, listType()).value as List<Any?>
+    }
+
+    fun getAction(name: String): Action {
+        return get(name)!!.value as Action
+    }
+
     fun getValue(name: String): Value {
         return engine.getValue(parent, get(name)!!, name)
     }
+
 
 }
