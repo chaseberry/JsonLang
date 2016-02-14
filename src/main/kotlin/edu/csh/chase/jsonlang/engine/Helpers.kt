@@ -22,4 +22,8 @@ fun arrayType() = Type(RawType.Array)
 
 fun mAnyType() = Type(RawType.MAny)
 
+fun listType() = Type(RawType.Array)
+
+fun actionType() = Type(RawType.Action)
+
 fun parseError(error: String, location: String) = JLParseException(error, location)
