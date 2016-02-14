@@ -1,6 +1,6 @@
 package edu.csh.chase.jsonlang.engine.models
 
-enum class RawType(val value: String) {
+enum class RawType(val value: kotlin.String) {
     String("String"), Number("Number"), Boolean("Boolean"), Object("Object"), Array("Array"), Any("Any"),
     MString("?String"), MNumber("?Number"), MBoolean("?Boolean"), MObject("?Object"), MArray("?Array"), MAny("?Any"),
     Action("action");
