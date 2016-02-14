@@ -12,7 +12,16 @@ class PrintFunction(e: Engine) : NativeFunction(e, "print", null) {
     override val parameters: List<ParameterDefinition> = listOf(ParameterDefinition("message", mAnyType()))
 
     override fun execute(parent: String, params: ParamMap): Value? {
-        print(params.getAnyM("message"))
+        val message = params.getAnyM("message")
+        if (message is List<*>) {
+            return printList(message)
+        }
+        print(message)
+        return null
+    }
+
+    private fun printList(lst: List<*>): Value? {
+        print(lst.map { (it as Value).value })
         return null
     }
 
