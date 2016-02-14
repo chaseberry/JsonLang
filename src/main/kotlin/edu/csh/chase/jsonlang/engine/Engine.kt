@@ -8,11 +8,11 @@ import edu.csh.chase.jsonlang.engine.models.Value
 import edu.csh.chase.jsonlang.engine.parsing.CoreLoader
 import java.util.*
 
-abstract class Engine(val programs: List<Program<out Callable>>) {
+abstract class Engine(val programs: ArrayList<Program<out Callable>>) {
 
-    private val stack = LinkedList<Frame>()//TODO Move the Memory into the stack
+    private val stack = LinkedList<Frame>()
 
-    private val globalMemory = HashMap<String, Value>()//Accesible anywhere with globalGet and globalSet
+    private val globalMemory = HashMap<String, Value>()
 
     private val coreFunctions = HashMap<String, NativeFunction>()
 
@@ -24,14 +24,11 @@ abstract class Engine(val programs: List<Program<out Callable>>) {
         }
     }
 
-    fun addFunction(func: NativeFunction) {
-        if (func.name.contains(".")) {
-            throw error("Error adding ${func.name}. Native function names cannot contains periods.")
+    fun addProgram(program: Program<out Callable>) {
+        if (program in programs) {
+            throw error("Error adding ${program.name}. Program already exists.")
         }
-        if (func.name in coreFunctions) {
-            throw error("Error adding ${func.name}. Function already exists.")
-        }
-        coreFunctions[func.name] = func
+        programs.add(program)
     }
 
     abstract fun execute()
@@ -116,7 +113,7 @@ abstract class Engine(val programs: List<Program<out Callable>>) {
         return r
     }
 
-    private fun executeAction(parent: String, action: Action): Value? {
+    internal fun executeAction(parent: String, action: Action): Value? {
         val func = findFunction(action.name)
         val r = if (func is NativeFunction) {
             executeNativeFunction("$parent", func, action)
