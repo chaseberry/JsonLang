@@ -1,0 +1,104 @@
+{
+  "name": "whatever",
+  "meta": {
+    "author": "Chase",
+    "date": "Aug 18th, 2016"
+  },
+  "main": [
+    {
+      "*block": "Each block can define any number of vars, but only one `action``",
+      "*x": "Sets x in the scope of `main`",
+      "//": "comments?",
+      "print": "Hello World!"
+    },
+    {
+      "*x": {
+        "removeWhiteSpace": "*x"
+      }
+    },
+    {
+      "print": "Functions that take 1 arg can be used as key:value"
+    },
+    {
+      "print": {
+        "message": "You can also invoke them with keyword args"
+      }
+    },
+    {
+      "print": [
+        "Or using the parameters syntax"
+      ]
+    },
+    {
+      "*num": 15,
+      "*num2": {
+        "add": [
+          "*num",
+          19
+        ]
+      }
+    }
+  ],
+  "add": {
+    "type": "function",
+    "args": {
+      "i": "Int",
+      "j": "Int"
+    },
+    "definition": [
+    ]
+  },
+  "Point": {
+    "type": "class",
+    "members": {
+      "x": "Int",
+      "y": {
+        "visibility": "public",
+        "type": "Int",
+        "mutable": true
+      }
+    },
+    "constructor": [
+      {
+        "args": {},
+        "definition": {
+          "*x": 0,
+          "*y": 0
+        }
+      },
+      {
+        "args": {
+          "x": "Int",
+          "y": "Int"
+        },
+        "definition": {
+          "*x": "*args.x",
+          "*y": "*args.y"
+        }
+      }
+    ],
+    "add": {
+      "args": {
+        "point": "Point"
+      },
+      "definition": [
+        {
+          "*x": {
+            "add": [
+              "*x",
+              "*args.point.x"
+            ]
+          },
+          "*y": {
+            "add": [
+              "*y",
+              "*args.point.y"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "mainFunction": "main",
+  "args": []
+}
