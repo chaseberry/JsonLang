@@ -2,8 +2,9 @@
 
 {
     "name" : String,
-    "arguments" : ,
-    "returns": Type
+    "local" : ?Boolean,
+    "arguments" : ?List<Arugment>,
+    "returns": ?Type,
     "do" : List<Action>,
     
 }
