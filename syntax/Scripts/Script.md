@@ -2,12 +2,8 @@
 
 
 
-```javascript
-
+```json
 {
-
     "do": List<Action>
-
 }
-
 ```

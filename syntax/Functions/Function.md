@@ -11,7 +11,6 @@ local defines who can access this function
     "local" : ?Boolean,
     "arguments" : ?List<Arugment>,
     "returns": ?Type,
-    "do" : List<Action>,
-    
+    "do" : List<Action>
 }
 ```
