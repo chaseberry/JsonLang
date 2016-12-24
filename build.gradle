@@ -17,7 +17,7 @@ repositories {
 }
 
 buildscript {
-    ext.kotlin_version = '1.0.0-rc-1036'
+    ext.kotlin_version = '1.0.0'
     repositories {
         mavenCentral()
         jcenter()
@@ -31,7 +31,7 @@ buildscript {
 dependencies {
     testCompile 'junit:junit:4.11'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "edu.csh.chase.kjson:kjson:0.0.16"
+    compile "edu.csh.chase.kjson:kjson:0.0.17"
 }
 
 sourceSets {
