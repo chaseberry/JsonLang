@@ -1,12 +1,7 @@
 {
-
-  "do":[
-
+  "do": [
     {
-        "print":
+      "print": "Hello World!"
     }
-
   ]
-
-
 }
